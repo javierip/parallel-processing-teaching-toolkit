@@ -7,9 +7,3 @@ Part of the code was ispired by:
  * [An intoductory book about parallel processing](http://www.paraninfo.es/catalogo/9788497326742/INTRODUCCION-A-LA-PROGRAMACION-PARALELA) (Giménez, Domingo, José Miguel Mantas, and Antonio M. Vidal. Introducción a la programación paralela. Paraninfo Cengage Learning, 2008.)
 
 
-Open a terminal and type:
-```bash
-> sh run.sh 
-```
-
-
