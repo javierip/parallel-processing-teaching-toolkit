@@ -8,7 +8,8 @@ int main () {
     int i, j;
     int totalNumberThreads, threadID;
     int actualRow, actualColumn, sum;
-    int a[ROW_MAX_VALUE], c[ROW_MAX_VALUE], b[COLUMN_MAX_VALUE][ROW_MAX_VALUE];
+    int a[ROW_MAX_VALUE], c[ROW_MAX_VALUE],
+            b[COLUMN_MAX_VALUE][ROW_MAX_VALUE];
 
     actualColumn = COLUMN_MAX_VALUE;
     actualRow = ROW_MAX_VALUE;
