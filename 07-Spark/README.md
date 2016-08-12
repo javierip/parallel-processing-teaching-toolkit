@@ -9,8 +9,8 @@ These examples show the use of Spark.
 
 * Download Spark from http://spark.apache.org/downloads.html
 
-1. sudo tar xvfz spark<version>.tgz -C  /usr/local/
-2. sudo ln -s /usr/local/spark<version> /usr/local/spark
+1. sudo tar xvfz spark_version_.tgz -C  /usr/local/
+2. sudo ln -s /usr/local/spark_version_ /usr/local/spark
 
 
 * Start Spark master
