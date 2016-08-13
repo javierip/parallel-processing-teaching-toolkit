@@ -1,11 +1,14 @@
 *About
+
 Counts the number of words that are in the file word.txt
 
 *Run
+
 Open a terminal and type:
 
 sh run.sh
- 
+
+
 *Output
 
 INFO TaskSchedulerImpl: Adding task set 1.0 with 1 tasks
@@ -21,6 +24,8 @@ INFO DAGScheduler: ResultStage 1 (collect at /usr/local/spark/examples/src/main/
 INFO DAGScheduler: Job 0 finished: collect at /usr/local/spark/examples/src/main/python/wordcount.py:40, took 1,429788 s
 
 : 1
+
 world: 2
+
 Hello: 3
 
