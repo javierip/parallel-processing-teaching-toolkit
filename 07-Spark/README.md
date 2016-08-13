@@ -15,6 +15,3 @@ These examples show the use of Spark.
 2. sudo ln -s /usr/local/spark.version   /usr/local/spark
 
 
-* Start Spark master
-
-1. sudo /usr/local/spark/sbin/start-master.sh
