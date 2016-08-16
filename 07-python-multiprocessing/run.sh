@@ -1,4 +1,5 @@
 #!/bin/bash
-python serie.py
-
+echo Running serial code..
+python serial-example.py
+echo Running parallel code..
 python multiprocessing-example.py
