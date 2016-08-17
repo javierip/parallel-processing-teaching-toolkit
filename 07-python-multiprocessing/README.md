@@ -4,7 +4,7 @@ This example uses the Python's [multiprocessing library](https://docs.python.org
 It includes a serial example using just a `for` loop and the parallel example using a pool of 4 workers.
 ## Requirements
 
-* Pyhton > 2.6
+* Python > 2.6
 
 ## Run
 
