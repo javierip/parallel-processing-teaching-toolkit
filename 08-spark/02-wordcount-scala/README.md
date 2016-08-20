@@ -19,7 +19,7 @@ Then we can verify on the page that it is running and is assigned an worker iden
 
 # Compille
 
-To run the code WordCount.scala is necessary to generate a .jar file. For this we use the tool sbt (Simple Build Tool](http://www.scala-sbt.org). To install run:
+To run the code WordCount.scala is necessary to generate a .jar file. For this we use the tool sbt [(Simple Build Tool)](http://www.scala-sbt.org). To install run:
 
 	$ echo "deb https://dl.bintray.com/sbt/debian /" | sudo tee -a /etc/apt/sources.list.d/sbt.list
 	$ sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 642AC823
