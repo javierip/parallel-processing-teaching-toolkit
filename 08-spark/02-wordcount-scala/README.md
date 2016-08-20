@@ -9,7 +9,7 @@ To launch the master run:
 
 	$ /usr/local/spark/sbin/start-master.sh
 
-To verify that the master is running we can go to page http://localhost:8080/. This page allows you to monitor the status of the master and keeps track of the workers, of the applications that are running and completed
+To verify that the master is running we can go to page [http://localhost:8080/](http://localhost:8080/). This page allows you to monitor the status of the master and keeps track of the workers, of the applications that are running and completed
 
 To launch a worker run:
  
@@ -19,7 +19,7 @@ Then we can verify on the page that it is running and is assigned an worker iden
 
 # Compille
 
-To run the code WordCount.scala is necessary to generate a .jar file. For this we use the tool sbt (Simple Build Tool](). sbt can be downloaded from [www.scala-sbt.org/download.html]. To install run:
+To run the code WordCount.scala is necessary to generate a .jar file. For this we use the tool sbt (Simple Build Tool](http://www.scala-sbt.org). To install run:
 
 	$ echo "deb https://dl.bintray.com/sbt/debian /" | sudo tee -a /etc/apt/sources.list.d/sbt.list
 	$ sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 642AC823
@@ -55,15 +55,15 @@ Spark provides the tool spark-submit to submitting jobs to a cluster. This tool 
 
  * Locally (standalone)
 
-	$ /usr/local/spark/bin/spark-submit --class WordCount --master local target/scala-2.11/word-count_2.11-1.0.jar ../word.txt
+		$ /usr/local/spark/bin/spark-submit --class WordCount --master local target/scala-2.11/word-count_2.11-1.0.jar ../word.txt
 
  * Locally with 4 Cores 
 
-	$ /usr/local/spark/bin/spark-submit --class WordCount --master local[4] target/scala-2.11/simple-project_2.11-1.0.jar ../word.txt
+		$ /usr/local/spark/bin/spark-submit --class WordCount --master local[4] target/scala-2.11/simple-project_2.11-1.0.jar ../word.txt
 
  * In a cluster using a worker (master and worker running on the local machine) 
 	
-	$ /usr/local/spark/bin/spark-submit --class WordCount --master spark://localhost:7077 target/scala-2.11/word-count_2.11-1.0.jar ../word.txt
+		$ /usr/local/spark/bin/spark-submit --class WordCount --master spark://localhost:7077 target/scala-2.11/word-count_2.11-1.0.jar ../word.txt
 
 # Output
 
