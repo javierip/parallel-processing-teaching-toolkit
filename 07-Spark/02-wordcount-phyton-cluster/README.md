@@ -15,7 +15,9 @@ Counts the number of words that are in the file word.txt
 #Run
 
 Open a terminal and type:
+
 1. sudo /usr/local/spark/sbin/start.all
+
 2. sh run.sh
 
 
