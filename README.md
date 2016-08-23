@@ -3,9 +3,10 @@ This repository contains examples that help students to learn parallel and distr
 
 ## Contnent
 The content of the repository is ordered as follows:
-1.Compiling examples 
 
-2.Terminal scripting 
+1. Compiling examples 
+
+2. Terminal scripting 
 
 3. Multi-core processors programming 
 
