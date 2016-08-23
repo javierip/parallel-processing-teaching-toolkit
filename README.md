@@ -4,7 +4,7 @@ This repository contains examples that help students to learn parallel and distr
 ## Contnent
 The content of the repository is ordered as follows:
 
-1. [Compiling examples](../01-compiling)
+1. [Compiling examples](../01-compiling/README.md)
 
 2. Terminal scripting 
 
