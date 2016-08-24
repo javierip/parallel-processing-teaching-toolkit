@@ -1,7 +1,7 @@
 # Parallel Code Examples (PCE)
 This repository contains examples that help students to learn parallel and distributed computing (PDC) concepts. [Here you will find the official website](http://javierip.github.io/parallel-code-examples/).
 
-## Contnent
+## Content
 The content of the repository is ordered as follows:
 
 1. [Compiling examples](../master/01-compiling)
