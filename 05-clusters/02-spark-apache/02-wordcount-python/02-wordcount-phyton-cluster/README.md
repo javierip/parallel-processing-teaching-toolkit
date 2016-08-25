@@ -53,8 +53,8 @@ The output shows many lines of status information of the run. Between these line
 	INFO DAGScheduler: Job 0 finished: collect at /usr/local/spark/examples/src/main/python/wordcount.py:40, took 4,552225 s
 
 
->world: 2
->Hello: 3
+*world: 2*
+*Hello: 3*
 
 # References
 
