@@ -35,7 +35,6 @@ The output shows many lines of status information of the run. Between these line
 	INFO TaskSchedulerImpl: Adding task set 0.0 with 1 tasks
 	INFO TaskSetManager: Starting task 0.0 in stage 0.0 (TID 0, localhost, partition 0, PROCESS_LOCAL, 5969 bytes)
 	INFO Executor: Fetching file:/usr/local/spark/examples/src/main/python/wordcount.py with timestamp 1471871541824
-	INFO FileScanRDD: Reading File path: file:///home/adrian/word.txt, range: 0-31, partition values: [empty row]
 	INFO TaskSetManager: Finished task 0.0 in stage 0.0 (TID 0) in 1007 ms on localhost (1/1)
 	INFO DAGScheduler: ShuffleMapStage 0 (reduceByKey at /usr/local/spark/examples/src/main/python/wordcount.py:39) finished in 1,056 s
 	INFO DAGScheduler: Submitting 1 missing tasks from ResultStage 1 (PythonRDD[8] at collect at /usr/local/spark/examples/src/main/python/wordcount.py:40)
