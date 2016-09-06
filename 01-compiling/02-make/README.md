@@ -18,8 +18,6 @@ Open a terminal and type:
 > sh run.sh
 ```
 
-It will run `hello-pycuda.py` with 400 elements in each array.
-
 
 ## Output
 
