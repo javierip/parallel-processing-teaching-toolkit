@@ -1,10 +1,24 @@
-##  Compile
+## About this example
+
+This example shows how to run and compile a simple OpenCL program.
+
+## Requirements
+
+CUDA Toolkit and proper Drivers.
+
+## Run
+
 Open a terminal and type:
+
 ```bash
-> sh run.sh 
+sh run.sh
 ```
 
-##  Output
+
+## Output
+
+A typical output should look like this one. 
+
 ```
 Running Vector Addition program
 
@@ -25,5 +39,10 @@ No build errors
 Output is correct
 
 ```
+
+## Extra Resources
+
+The [oficial documentation](https://developer.nvidia.com/cuda-toolkit) for CUDA.
+
 
 
