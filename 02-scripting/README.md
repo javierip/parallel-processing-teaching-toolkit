@@ -1,3 +1,6 @@
-# Title 1
+# Scripting examples
 
-Complete. 
+Here is a list of examples:
+
+1. [Simple script](./01-simple-script)
+2. [Using iteration](./02-iteration)
