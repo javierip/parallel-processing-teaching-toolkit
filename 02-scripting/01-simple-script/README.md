@@ -1,6 +1,6 @@
 ## About this example
 
-This example shows how to handle arguments in a C programm.
+This example shows how to handle arguments in a C program.
 
 ## Requirements
 
