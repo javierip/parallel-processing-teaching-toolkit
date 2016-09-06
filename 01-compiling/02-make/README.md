@@ -15,7 +15,7 @@ apt-get install build-essential
 Open a terminal and type:
 
 ```bash
-> sh run.sh
+sh run.sh
 ```
 
 
