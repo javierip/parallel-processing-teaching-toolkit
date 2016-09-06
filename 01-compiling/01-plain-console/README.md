@@ -15,11 +15,8 @@ apt-get install build-essential
 Open a terminal and type:
 
 ```bash
-> sh run.sh
+sh run.sh
 ```
-
-It will run `hello-pycuda.py` with 400 elements in each array.
-
 
 ## Output
 
