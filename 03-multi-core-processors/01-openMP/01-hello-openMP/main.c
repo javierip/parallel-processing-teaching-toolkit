@@ -7,7 +7,7 @@ int main ()
     /* Multiple threads running in parallel from here */
     #pragma omp parallel private(idThread)
     {
-        /* Obtenemos el id de cada thread */
+        /* Obtain and print thread id */
         idThread = omp_get_thread_num();
         printf("Hello! my id is %d\n", idThread);
 
