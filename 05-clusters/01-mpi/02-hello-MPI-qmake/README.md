@@ -1,10 +1,25 @@
-##  Compile
+## About this example
+
+This example shows how to run a MPI program on a single computer using QMake.
+
+## Requirements
+ 
+ * OpenMPI
+ * QT SDK
+
+
+## Run
+
 Open a terminal and type:
+
 ```bash
-> sh run.sh 
+sh run.sh
 ```
 
-##  Output
+
+## Output
+
+A typical output should look like this one. 
 ```
 javier@perca:~/ > sh run.sh 
 mpicc -c -I/usr/lib/openmpi/include -I/usr/lib/openmpi/include/openmpi -pthread -O2 -Wall -W -D_REENTRANT -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -DQT_SHARED -I/usr/share/qt4/mkspecs/linux-g++-64 -I. -I/usr/include/qt4/QtCore -I/usr/include/qt4/QtGui -I/usr/include/qt4 -I. -I. -o main.o main.c
