@@ -1,11 +1,24 @@
-##  Compile
+## About this example
+
+This example shows how to obtain OpenCL information.
+
+## Requirements
+
+CUDA Toolkit and proper Drivers.
+
+## Run
+
 Open a terminal and type:
+
 ```bash
-> sh run.sh 
+sh run.sh
 ```
 
 
-##  Output
+## Output
+
+A typical output should look like this one. 
+
 ```
 Number of platforms:    1
         CL_PLATFORM_PROFILE:    FULL_PROFILE
@@ -142,3 +155,8 @@ Number of platforms:    1
 
 
 ```
+
+## Extra Resources
+
+ * [OpenCL Programming Guide 1.2 Examples](https://github.com/bgaster/opencl-book-samples).
+ * [NVIDIA toolkit documentation](https://developer.nvidia.com/cuda-toolkit).
