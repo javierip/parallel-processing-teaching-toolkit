@@ -1,6 +1,7 @@
 # MPI examples
 
 List of examples:
+
 1. [MPI from terminal on your computer](./01-hello-MPI-terminal)
 2. [MPI and QMake on your computer](./02-hello-MPI-qmake)
 3. [MPI and CMake on your computer](./03-hello-MPI-cmake)
