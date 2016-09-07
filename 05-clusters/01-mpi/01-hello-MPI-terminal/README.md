@@ -1,10 +1,24 @@
-##  Compile
+## About this example
+
+This example shows how to run a MPI program on a computer.
+
+## Requirements
+ 
+ * OpenMPI
+
+
+## Run
+
 Open a terminal and type:
+
 ```bash
-> sh run.sh 
+sh run.sh
 ```
 
-##  Output
+
+## Output
+
+A typical output should look like this one. 
 ```
 javier@perca:~/ > sh run.sh 
 Hello world from process 0 of 8
