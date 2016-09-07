@@ -1,10 +1,24 @@
-##  Compile
+## About this example
+
+This example shows how to run a MPI program on cluster.
+
+## Requirements
+ 
+ * OpenMPI
+
+
+## Run
+
 Open a terminal and type:
+
 ```bash
-> sh run.sh 
+sh run.sh
 ```
 
-##  Output
+
+## Output
+
+A typical output should look like this one. 
 ```
 [javier@c5n00 05-hello-MPI-cluster]$ sh run.sh 
 Hello from process 1 of 8
