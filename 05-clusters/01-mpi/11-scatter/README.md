@@ -1,10 +1,24 @@
-##  Compile
+## About this example
+
+This example shows how to run a MPI Scatter directive.
+
+## Requirements
+ 
+ * OpenMPI
+
+
+## Run
+
 Open a terminal and type:
+
 ```bash
-> sh run.sh 
+sh run.sh
 ```
 
-##  Output
+
+## Output
+
+A typical output should look like this one. 
 ```
 javier@delfin:~/ > sh run.sh 
 -- The C compiler identification is GNU 4.8.4
