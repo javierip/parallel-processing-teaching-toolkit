@@ -42,7 +42,8 @@ Output is correct
 
 ## Extra Resources
 
-The [oficial documentation](https://developer.nvidia.com/cuda-toolkit) for CUDA.
+ * [OpenCL Programming Guide 1.2 Examples](https://github.com/bgaster/opencl-book-samples).
+ * [NVIDIA toolkit documentation](https://developer.nvidia.com/cuda-toolkit).
 
 
 
