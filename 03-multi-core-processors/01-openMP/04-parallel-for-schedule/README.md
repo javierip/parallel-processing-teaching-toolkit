@@ -7,7 +7,7 @@ This example performs a vector addition using a [loop schedule](https://software
 You should have a compiler installed. Ubuntu Linux:
 
 ```bash
-sudo apt-get install qt-sdk
+sudo apt-get install cmake
 ```
 
 ## Run
