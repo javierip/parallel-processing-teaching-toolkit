@@ -7,7 +7,7 @@ This is the serial implementation of the particles simulator.
 You should have a compiler installed. Ubuntu Linux:
 
 ```bash
-sudo apt-get install qt-sdk
+sudo apt-get install cmake
 ```
 
 ## Run
@@ -15,7 +15,7 @@ sudo apt-get install qt-sdk
 Open a terminal and type:
 
 ```bash
-> sh run.sh
+sh run.sh
 ```
 
 It will run the simulator using 100 particles and will generate an output file named _output-serial-100-particles.txt_.
