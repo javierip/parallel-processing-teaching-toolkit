@@ -4,14 +4,15 @@ This is the CUDA implementation of the particles simulator.
 
 ## Requirements
 
-You must have CUDA installed in your system. Look at the [CUDA section](../../../04-GPU-accelerators/01-cuda) for examples.
+ * You must have CUDA installed in your system. Look at the [CUDA section](../../../04-GPU-accelerators/01-cuda) for examples.
+ * CMake
 
 ## Run
 
 Open a terminal and type:
 
 ```bash
-> sh run.sh
+sh run.sh
 ```
 
 It will run the simulator using 100 particles and will generate an output file named _output-serial-100-particles.txt_.
