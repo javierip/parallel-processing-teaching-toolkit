@@ -1,8 +1,9 @@
-# Spark examples
+# Apache Spark - Word Counter Python
 
-##About 
+List of examples:
 
-These examples show the use of Spark. 
+1. [Word counter using Python running on one machine](./01-wordcount-phyton-standalone)
+2. [Word counter using Python running on a cluster](./02-wordcount-phyton-cluster)
 
 
 
