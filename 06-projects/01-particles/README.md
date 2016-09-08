@@ -4,7 +4,7 @@ Parallelize Particle Simulation. The code is based on [CS 267 at Berkeley Univer
 
 There are different implementations of this code, listed as below:
 
-1. [Serial](./01-serial-safe)
+1. [Serial](./01-serial-plain)
 2. [Safe Serial](./02-serial-safe)
 3. [OpenMP](./03-openMP)
 4. [CUDA](./04-cuda)
