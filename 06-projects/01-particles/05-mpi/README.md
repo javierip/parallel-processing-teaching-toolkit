@@ -4,14 +4,15 @@ This is the MPI implementation of the particles simulator.
 
 ## Requirements
 
-You must have MPI installed. Look at the [MPI section](../../../05-clusters/01-mpi) for example.
+ * You must have MPI installed. Look at the [MPI section](../../../05-clusters/01-mpi) for example.
+ * CMake
 
 ## Run
 
 Open a terminal and type:
 
 ```bash
-> sh run.sh
+sh run.sh
 ```
 
 It will run the simulator using 8 nodes, 100 particles and will generate an output file named _output-serial-100-particles.txt_.
