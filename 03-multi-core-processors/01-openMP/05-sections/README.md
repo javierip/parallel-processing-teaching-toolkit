@@ -7,7 +7,7 @@ This examples shows the use of the _section_ directive in OpenMP.
 You should have a compiler installed. Ubuntu Linux:
 
 ```bash
-sudo apt-get install qt-sdk
+sudo apt-get install cmake
 ```
 
 ## Run
