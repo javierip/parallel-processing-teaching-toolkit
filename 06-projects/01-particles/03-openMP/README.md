@@ -7,7 +7,7 @@ This is the OpenMP implementation of the particles simulator.
 You should have a compiler installed. Ubuntu Linux:
 
 ```bash
-sudo apt-get install build-essential
+sudo apt-get install build-essential cmake
 ```
 
 ## Run
