@@ -7,7 +7,7 @@ This is the "Hello World" example using OpenMP.
 You should have a compiler installed. Ubuntu Linux:
 
 ```bash
-sudo apt-get install qt-sdk
+sudo apt-get install cmake
 ```
 
 ## Run
@@ -18,7 +18,7 @@ Open a terminal and type:
 > sh run.sh
 ```
 
-It will compile the code using the qt compiler. Alternatively, you could use the gcc compiler running:
+It will compile the code using CMake. Alternatively, you could use the gcc compiler running:
 
 ```bash
 > sh gcc-classic-compile.sh
