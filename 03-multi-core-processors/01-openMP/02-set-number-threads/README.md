@@ -7,7 +7,7 @@ This example is similar to the [first "Hello World" example](../01-hello-openMP)
 You should have a compiler installed. Ubuntu Linux:
 
 ```bash
-sudo apt-get install qt-sdk
+sudo apt-get install cmake
 ```
 
 ## Run
