@@ -15,7 +15,7 @@ sudo apt-get install build-essential
 Open a terminal and type:
 
 ```bash
-> sh run.sh
+sh run.sh
 ```
 
 It will run the simulator using 100 particles and will generate an output file named _output-serial-100-particles.txt_.
