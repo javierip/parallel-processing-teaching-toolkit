@@ -1,6 +1,6 @@
 ## About this example
 
-This example shows a C program compilation and run.
+This example shows a C program compilation and run using gcc from the command line.
 
 ## Requirements
 
