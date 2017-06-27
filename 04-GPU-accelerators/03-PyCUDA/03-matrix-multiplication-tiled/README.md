@@ -1,6 +1,6 @@
 ## About this example
 
-Multiples two square matrices together using multiple blocks and shared memory. It is based on [this PyCUDA example]](https://wiki.tiker.net/PyCuda/Examples/MatrixmulTiled).
+Multiples two square matrices together using multiple blocks and shared memory. It is based on [this PyCUDA example](https://wiki.tiker.net/PyCuda/Examples/MatrixmulTiled).
 
 ## Requirements
 
