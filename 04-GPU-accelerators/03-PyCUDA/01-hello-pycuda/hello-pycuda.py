@@ -10,6 +10,7 @@ parser.add_argument("arrayLength",
 args = parser.parse_args()
 
 from pycuda.compiler import SourceModule
+
 mod = SourceModule("""
 __global__ void multiply_them(float *dest, float *a, float *b)
 {
