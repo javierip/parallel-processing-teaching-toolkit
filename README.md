@@ -1,4 +1,4 @@
-# Parallel Code Examples (PCE)
+# Parallel Code Examples (PCE) - A teaching toolkit
 A repository designed to teach Parallel and Distributed Computing. [Official website](http://javierip.github.io/parallel-code-examples/).
 PCE is based on examples and was created having in mind most of the problems begginers in parallel computing use to have.
 

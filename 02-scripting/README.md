@@ -1,6 +1,6 @@
-# Scripting examples
+# Scripting
 
-In next modules, you'll find a `run.sh` file which will compile a run examples for you. That is a bash script, a way of doing multiple tasks only executing one file.
+In next modules, you'll find a `run.sh` file which will compile a run examples for you. That is a bash script, a way of doing multiple tasks only executing a file.
 
 Here are some basic examples that show what you can do with scripting:
 
