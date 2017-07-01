@@ -1,4 +1,4 @@
-# Multi-core processors examples
+# Multi-core processors
 
 Multi-core processors are present in every computer nowadays. Here are two set of examples you can run without introduce new hardware.
 The first ones are written in C/C++ using OpenMP.

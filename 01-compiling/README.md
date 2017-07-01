@@ -1,4 +1,4 @@
-# Compilation examples
+# Compilation
 
 Compile a code is the first thing you have to do before running any of our examples in C/C++.
 

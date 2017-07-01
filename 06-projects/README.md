@@ -1,4 +1,4 @@
-# Project examples
+# Projects
 
 This section contains projects that integrates what we have learned in previous sections.
 
