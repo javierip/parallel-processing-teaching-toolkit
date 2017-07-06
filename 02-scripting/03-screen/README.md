@@ -28,9 +28,10 @@ A typical output should look like this one.
 
 There is a screen on:
         3119.Counter    (Detached)
-```
+
 ## Run
 
+```
 screen -r Counter (attach session)
 
 Press CTRL a + d (dettach session)
@@ -40,20 +41,22 @@ Press CTRL a + d (dettach session)
 
 A typical output should look like this one. 
 
- Second 120
- Second 119
- Second 118
- Second 117 
- Second 116 
- Second 115 
- Second 114 
- Second 113 
- Second 112 
- Second 111 
- Second 110 
- Second 109 
- Second 108 
+```
+	Second 120
+	Second 119
+	Second 118
+	Second 117 
+	Second 116 
+	Second 115 
+	Second 114 
+	Second 113 
+	Second 112 
+	Second 111 
+	Second 110 
+	Second 109 
+	Second 108 
 
+```
 
 
 [detached from 3119.Counter]
