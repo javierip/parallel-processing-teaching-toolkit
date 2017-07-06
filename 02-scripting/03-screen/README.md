@@ -26,9 +26,11 @@ screen -ls ( list screen session)
 
 A typical output should look like this one. 
 
+```
 There is a screen on:
         3119.Counter    (Detached)
 
+```
 ## Run
 
 ```
@@ -56,11 +58,11 @@ A typical output should look like this one.
 	Second 109 
 	Second 108 
 
-```
 
 
 [detached from 3119.Counter]
 
+```
 
 ## Extra Resources
 https://www.gnu.org/software/screen/manual/screen.html
