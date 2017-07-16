@@ -30,3 +30,4 @@ On each module, the user will find a set of examples that can be easily compiled
 - [@leanbalma](https://github.com/leanbalma)
 - [@sancolo](https://github.com/sancolo)
 - [@arostag](https://github.com/arostag)
+- [@arielivandiaz](https://github.com/arielivandiaz)
