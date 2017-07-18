@@ -1,0 +1,130 @@
+## About this example
+
+This example shows the CUDA platforms and devices in your PC.
+
+## Requirements
+
+You must have Python and PIP installed in your system. PyCUDA can be installed through PIP:
+
+```bash
+$ pip install pycuda
+```
+
+If you have problems trying to install pycuda, check out [this post](https://wiki.tiker.net/PyCuda/Installation).
+
+## Run
+
+Open a terminal and type:
+
+```bash
+> sh run.sh
+```
+
+
+## Output
+
+A typical output should look like this one. 
+
+```
+N° of Device(s) found 1
+--------------------------------------------------
+Device #0: GeForce GTX 750
+ Compute Capability: 5.0
+ Total Memory: 978 MB
+ Global Memory Occupancy:87.000000% Free
+
+        ===Attributes for device 1
+         -MAX_THREADS_PER_BLOCK:1024
+         -MAX_BLOCK_DIM_X:1024
+         -MAX_BLOCK_DIM_Y:1024
+         -MAX_BLOCK_DIM_Z:64
+         -MAX_GRID_DIM_X:2147483647
+         -MAX_GRID_DIM_Y:65535
+         -MAX_GRID_DIM_Z:65535
+         -MAX_SHARED_MEMORY_PER_BLOCK:49152
+         -TOTAL_CONSTANT_MEMORY:65536
+         -WARP_SIZE:32
+         -MAX_PITCH:2147483647
+         -MAX_REGISTERS_PER_BLOCK:65536
+         -CLOCK_RATE:1137000
+         -TEXTURE_ALIGNMENT:512
+         -GPU_OVERLAP:1
+         -MULTIPROCESSOR_COUNT:4
+         -KERNEL_EXEC_TIMEOUT:1
+         -INTEGRATED:0
+         -CAN_MAP_HOST_MEMORY:1
+         -COMPUTE_MODE:DEFAULT
+         -MAXIMUM_TEXTURE1D_WIDTH:65536
+         -MAXIMUM_TEXTURE2D_WIDTH:65536
+         -MAXIMUM_TEXTURE2D_HEIGHT:65536
+         -MAXIMUM_TEXTURE3D_WIDTH:4096
+         -MAXIMUM_TEXTURE3D_HEIGHT:4096
+         -MAXIMUM_TEXTURE3D_DEPTH:4096
+         -MAXIMUM_TEXTURE2D_ARRAY_WIDTH:16384
+         -MAXIMUM_TEXTURE2D_ARRAY_HEIGHT:16384
+         -MAXIMUM_TEXTURE2D_ARRAY_NUMSLICES:2048
+         -SURFACE_ALIGNMENT:512
+         -CONCURRENT_KERNELS:1
+         -ECC_ENABLED:0
+         -PCI_BUS_ID:1
+         -PCI_DEVICE_ID:0
+         -TCC_DRIVER:0
+         -MEMORY_CLOCK_RATE:2505000
+         -GLOBAL_MEMORY_BUS_WIDTH:128
+         -L2_CACHE_SIZE:2097152
+         -MAX_THREADS_PER_MULTIPROCESSOR:2048
+         -ASYNC_ENGINE_COUNT:1
+         -UNIFIED_ADDRESSING:1
+         -MAXIMUM_TEXTURE1D_LAYERED_WIDTH:16384
+         -MAXIMUM_TEXTURE1D_LAYERED_LAYERS:2048
+         -MAXIMUM_TEXTURE2D_GATHER_WIDTH:16384
+         -MAXIMUM_TEXTURE2D_GATHER_HEIGHT:16384
+         -MAXIMUM_TEXTURE3D_WIDTH_ALTERNATE:2048
+         -MAXIMUM_TEXTURE3D_HEIGHT_ALTERNATE:2048
+         -MAXIMUM_TEXTURE3D_DEPTH_ALTERNATE:16384
+         -PCI_DOMAIN_ID:0
+         -TEXTURE_PITCH_ALIGNMENT:32
+         -MAXIMUM_TEXTURECUBEMAP_WIDTH:16384
+         -MAXIMUM_TEXTURECUBEMAP_LAYERED_WIDTH:16384
+         -MAXIMUM_TEXTURECUBEMAP_LAYERED_LAYERS:2046
+         -MAXIMUM_SURFACE1D_WIDTH:16384
+         -MAXIMUM_SURFACE2D_WIDTH:65536
+         -MAXIMUM_SURFACE2D_HEIGHT:65536
+         -MAXIMUM_SURFACE3D_WIDTH:4096
+         -MAXIMUM_SURFACE3D_HEIGHT:4096
+         -MAXIMUM_SURFACE3D_DEPTH:4096
+         -MAXIMUM_SURFACE1D_LAYERED_WIDTH:16384
+         -MAXIMUM_SURFACE1D_LAYERED_LAYERS:2048
+         -MAXIMUM_SURFACE2D_LAYERED_WIDTH:16384
+         -MAXIMUM_SURFACE2D_LAYERED_HEIGHT:16384
+         -MAXIMUM_SURFACE2D_LAYERED_LAYERS:2048
+         -MAXIMUM_SURFACECUBEMAP_WIDTH:16384
+         -MAXIMUM_SURFACECUBEMAP_LAYERED_WIDTH:16384
+         -MAXIMUM_SURFACECUBEMAP_LAYERED_LAYERS:2046
+         -MAXIMUM_TEXTURE1D_LINEAR_WIDTH:134217728
+         -MAXIMUM_TEXTURE2D_LINEAR_WIDTH:65536
+         -MAXIMUM_TEXTURE2D_LINEAR_HEIGHT:65536
+         -MAXIMUM_TEXTURE2D_LINEAR_PITCH:1048544
+         -MAXIMUM_TEXTURE2D_MIPMAPPED_WIDTH:16384
+         -MAXIMUM_TEXTURE2D_MIPMAPPED_HEIGHT:16384
+         -COMPUTE_CAPABILITY_MAJOR:5
+         -COMPUTE_CAPABILITY_MINOR:0
+         -MAXIMUM_TEXTURE1D_MIPMAPPED_WIDTH:16384
+         -STREAM_PRIORITIES_SUPPORTED:1
+         -GLOBAL_L1_CACHE_SUPPORTED:0
+         -LOCAL_L1_CACHE_SUPPORTED:1
+         -MAX_SHARED_MEMORY_PER_MULTIPROCESSOR:65536
+         -MAX_REGISTERS_PER_MULTIPROCESSOR:65536
+         -MANAGED_MEMORY:1
+         -MULTI_GPU_BOARD:0
+         -MULTI_GPU_BOARD_GROUP_ID:0
+--------------------------------------------------
+```
+
+## Extra Resources
+
+ * [OpenCL Programming Guide 1.2 Examples](https://github.com/bgaster/opencl-book-samples).
+ * [NVIDIA toolkit documentation](https://developer.nvidia.com/cuda-toolkit).
+
+
+
