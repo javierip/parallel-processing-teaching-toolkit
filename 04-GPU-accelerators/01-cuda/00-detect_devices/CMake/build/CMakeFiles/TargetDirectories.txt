@@ -1,0 +1,3 @@
+/home/ariel/Ariel-Parallel-Examples-MAGIv2/04-CUDA/00-detect_devices/CMake/build/CMakeFiles/edit_cache.dir
+/home/ariel/Ariel-Parallel-Examples-MAGIv2/04-CUDA/00-detect_devices/CMake/build/CMakeFiles/rebuild_cache.dir
+/home/ariel/Ariel-Parallel-Examples-MAGIv2/04-CUDA/00-detect_devices/CMake/build/CMakeFiles/application-CUDA.dir

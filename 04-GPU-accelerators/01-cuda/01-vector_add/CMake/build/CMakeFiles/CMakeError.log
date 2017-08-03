@@ -1,0 +1,55 @@
+Determining if the pthread_create exist failed with the following output:
+Change Dir: /home/ariel/Ariel-Parallel-Examples-MAGIv2/04-CUDA/01-vector_add/CMake/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_501ad/fast"
+/usr/bin/make -f CMakeFiles/cmTC_501ad.dir/build.make CMakeFiles/cmTC_501ad.dir/build
+make[1]: se entra en el directorio '/home/ariel/Ariel-Parallel-Examples-MAGIv2/04-CUDA/01-vector_add/CMake/build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_501ad.dir/CheckSymbolExists.c.o
+/usr/bin/cc    -fPIC    -o CMakeFiles/cmTC_501ad.dir/CheckSymbolExists.c.o   -c /home/ariel/Ariel-Parallel-Examples-MAGIv2/04-CUDA/01-vector_add/CMake/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c
+Linking C executable cmTC_501ad
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_501ad.dir/link.txt --verbose=1
+/usr/bin/cc  -fPIC     CMakeFiles/cmTC_501ad.dir/CheckSymbolExists.c.o  -o cmTC_501ad -rdynamic 
+CMakeFiles/cmTC_501ad.dir/CheckSymbolExists.c.o: En la función `main':
+CheckSymbolExists.c:(.text+0x1b): referencia a `pthread_create' sin definir
+collect2: error: ld returned 1 exit status
+CMakeFiles/cmTC_501ad.dir/build.make:97: fallo en las instrucciones para el objetivo 'cmTC_501ad'
+make[1]: *** [cmTC_501ad] Error 1
+make[1]: se sale del directorio '/home/ariel/Ariel-Parallel-Examples-MAGIv2/04-CUDA/01-vector_add/CMake/build/CMakeFiles/CMakeTmp'
+Makefile:126: fallo en las instrucciones para el objetivo 'cmTC_501ad/fast'
+make: *** [cmTC_501ad/fast] Error 2
+
+File /home/ariel/Ariel-Parallel-Examples-MAGIv2/04-CUDA/01-vector_add/CMake/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
+/* */
+#include <pthread.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef pthread_create
+  return ((int*)(&pthread_create))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+
+Determining if the function pthread_create exists in the pthreads failed with the following output:
+Change Dir: /home/ariel/Ariel-Parallel-Examples-MAGIv2/04-CUDA/01-vector_add/CMake/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_83a12/fast"
+/usr/bin/make -f CMakeFiles/cmTC_83a12.dir/build.make CMakeFiles/cmTC_83a12.dir/build
+make[1]: se entra en el directorio '/home/ariel/Ariel-Parallel-Examples-MAGIv2/04-CUDA/01-vector_add/CMake/build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_83a12.dir/CheckFunctionExists.c.o
+/usr/bin/cc    -fPIC -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTC_83a12.dir/CheckFunctionExists.c.o   -c /usr/share/cmake-3.5/Modules/CheckFunctionExists.c
+Linking C executable cmTC_83a12
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_83a12.dir/link.txt --verbose=1
+/usr/bin/cc  -fPIC -DCHECK_FUNCTION_EXISTS=pthread_create    CMakeFiles/cmTC_83a12.dir/CheckFunctionExists.c.o  -o cmTC_83a12 -rdynamic -lpthreads 
+/usr/bin/ld: no se puede encontrar -lpthreads
+collect2: error: ld returned 1 exit status
+CMakeFiles/cmTC_83a12.dir/build.make:97: fallo en las instrucciones para el objetivo 'cmTC_83a12'
+make[1]: *** [cmTC_83a12] Error 1
+make[1]: se sale del directorio '/home/ariel/Ariel-Parallel-Examples-MAGIv2/04-CUDA/01-vector_add/CMake/build/CMakeFiles/CMakeTmp'
+Makefile:126: fallo en las instrucciones para el objetivo 'cmTC_83a12/fast'
+make: *** [cmTC_83a12/fast] Error 2
+
+
