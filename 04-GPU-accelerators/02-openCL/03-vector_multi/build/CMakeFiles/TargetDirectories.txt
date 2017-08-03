@@ -1,0 +1,3 @@
+/home/ariel/Ariel-Parallel-Examples-MAGIv2/02-OpenCL/02-vector_multi/build/CMakeFiles/rebuild_cache.dir
+/home/ariel/Ariel-Parallel-Examples-MAGIv2/02-OpenCL/02-vector_multi/build/CMakeFiles/edit_cache.dir
+/home/ariel/Ariel-Parallel-Examples-MAGIv2/02-OpenCL/02-vector_multi/build/CMakeFiles/application-openCL.dir

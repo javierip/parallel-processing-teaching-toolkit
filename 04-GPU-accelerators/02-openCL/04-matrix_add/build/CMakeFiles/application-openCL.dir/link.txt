@@ -1,0 +1,1 @@
+/usr/bin/c++      CMakeFiles/application-openCL.dir/main.cpp.o  -o application-openCL -rdynamic -lOpenCL 
