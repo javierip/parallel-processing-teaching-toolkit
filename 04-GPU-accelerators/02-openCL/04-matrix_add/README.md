@@ -1,11 +1,11 @@
 ## About this example
 
 
-This example shows the addition of two matrices in CUDA.
+This example shows the addition of two matrices.
 
 ## Requirements
 
-CUDA Toolkit and proper Drivers.
+OpenCL SDK and proper Drivers.
 
 ## Run
 
