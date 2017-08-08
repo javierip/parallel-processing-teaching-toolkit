@@ -23,16 +23,20 @@
 #include <CL/cl.h>
 #endif
 
-///
-//  Constants
-//
-const int ARRAY_SIZE = 1000;
 
-///
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+#define  N_VECTORS 3  //Number of arrays needed
+//  Constants
+const int VECTOR_SIZE = 100000;
+
+///More cool fuction set by flash
+
 //  Create an OpenCL context on the first available platform using
 //  either a GPU or CPU depending on what is available.
-//
-cl_context CreateContext()
+cl_context cl_CreateContext()
 {
     cl_int errNum;
     cl_uint numPlatforms;
@@ -74,12 +78,48 @@ cl_context CreateContext()
 
     return context;
 }
+//  Create memory objects used as the arguments to the kernel
+bool cl_CreateMemObject(cl_context context, cl_mem memObject, int size, float *arr, int flag_rw) {
 
-///
+    if (flag_rw)
+        memObject = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR,
+                                   sizeof(float) * size, arr, NULL);
+
+    else
+        memObject = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
+                                   sizeof(float) * size, arr, NULL);
+
+    if (memObject == NULL) {
+        std::cerr << "Error creating memory objects." << std::endl;
+
+        return false;
+    }
+
+    return true;
+
+
+}
+bool CreateMemObjects(cl_context context, cl_mem memObjects[3],
+                      float *a, float *b)
+{
+    memObjects[0] = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
+                                   sizeof(float) * VECTOR_SIZE, a, NULL);
+    memObjects[1] = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
+                                   sizeof(float) * VECTOR_SIZE, b, NULL);
+    memObjects[2] = clCreateBuffer(context, CL_MEM_READ_WRITE,
+                                   sizeof(float) * VECTOR_SIZE, NULL, NULL);
+
+    if (memObjects[0] == NULL || memObjects[1] == NULL || memObjects[2] == NULL)
+    {
+        std::cerr << "Error creating memory objects." << std::endl;
+        return false;
+    }
+
+    return true;
+}
 //  Create a command queue on the first device available on the
 //  context
-//
-cl_command_queue CreateCommandQueue(cl_context context, cl_device_id *device)
+cl_command_queue cl_CreateCommandQueue(cl_context context, cl_device_id *device)
 {
     cl_int errNum;
     cl_device_id *devices;
@@ -126,10 +166,31 @@ cl_command_queue CreateCommandQueue(cl_context context, cl_device_id *device)
     return commandQueue;
 }
 
-///
+
+
+
+void cl_cleanup(cl_context context, cl_command_queue commandQueue, cl_program program, cl_kernel kernel, cl_mem *memObjects, int n_objetcs)
+{
+    for (int i = 0; i < n_objetcs; i++)
+        if (memObjects[i] != NULL)
+            clReleaseMemObject(memObjects[i]);
+
+    if (commandQueue != 0)
+        clReleaseCommandQueue(commandQueue);
+
+    if (kernel != 0)
+        clReleaseKernel(kernel);
+
+    if (program != 0)
+        clReleaseProgram(program);
+
+    if (context != 0)
+        clReleaseContext(context);
+
+}
+
 //  Create an OpenCL program from the kernel source file
-//
-cl_program CreateProgram(cl_context context, cl_device_id device, const char* fileName)
+cl_program cl_CreateProgram(cl_context context, cl_device_id device, const char* fileName)
 {
     cl_int errNum;
     cl_program program;
@@ -172,60 +233,26 @@ cl_program CreateProgram(cl_context context, cl_device_id device, const char* fi
     return program;
 }
 
-///
-//  Create memory objects used as the arguments to the kernel
-//  The kernel takes three arguments: result (output), a (input),
-//  and b (input)
-//
-bool CreateMemObjects(cl_context context, cl_mem memObjects[3],
-                      float *a, float *b)
-{
-    memObjects[0] = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
-                                   sizeof(float) * ARRAY_SIZE, a, NULL);
-    memObjects[1] = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
-                                   sizeof(float) * ARRAY_SIZE, b, NULL);
-    memObjects[2] = clCreateBuffer(context, CL_MEM_READ_WRITE,
-                                   sizeof(float) * ARRAY_SIZE, NULL, NULL);
+void cpu_multi (float *arr_a, float *arr_b, float *arr_c, int n) {
 
-    if (memObjects[0] == NULL || memObjects[1] == NULL || memObjects[2] == NULL)
-    {
-        std::cerr << "Error creating memory objects." << std::endl;
-        return false;
-    }
 
-    return true;
-}
-
-///
-//  Cleanup any created OpenCL resources
-//
-void Cleanup(cl_context context, cl_command_queue commandQueue,
-             cl_program program, cl_kernel kernel, cl_mem memObjects[3])
-{
-    for (int i = 0; i < 3; i++)
-    {
-        if (memObjects[i] != 0)
-            clReleaseMemObject(memObjects[i]);
-    }
-    if (commandQueue != 0)
-        clReleaseCommandQueue(commandQueue);
-
-    if (kernel != 0)
-        clReleaseKernel(kernel);
-
-    if (program != 0)
-        clReleaseProgram(program);
-
-    if (context != 0)
-        clReleaseContext(context);
+    for (int i = 0; i < n; i++)
+        arr_c[i] = arr_a[i] + arr_b[i];
 
 }
 
-///
-//	main() for HelloWorld example
-//
+
+bool cpu_check(float *arr_a, float *arr_b,  int n) {
+
+    for (int i = 0; i < n; i++)
+        if (arr_b[i] != arr_a[i])
+            return 0;
+    return 1;
+}
+//  main() for HelloWorld example
 int main(int argc, char** argv)
 {
+    //CL variables
     cl_context context = 0;
     cl_command_queue commandQueue = 0;
     cl_program program = 0;
@@ -234,8 +261,11 @@ int main(int argc, char** argv)
     cl_mem memObjects[3] = { 0, 0, 0 };
     cl_int errNum;
 
+    clock_t start, end;
+
+
     // Create an OpenCL context on first available platform
-    context = CreateContext();
+    context = cl_CreateContext();
     if (context == NULL)
     {
         std::cerr << "Failed to create OpenCL context." << std::endl;
@@ -244,47 +274,58 @@ int main(int argc, char** argv)
 
     // Create a command-queue on the first device available
     // on the created context
-    commandQueue = CreateCommandQueue(context, &device);
+    commandQueue = cl_CreateCommandQueue(context, &device);
     if (commandQueue == NULL)
     {
-        Cleanup(context, commandQueue, program, kernel, memObjects);
+        cl_cleanup(context, commandQueue, program, kernel, memObjects, N_VECTORS);
         return 1;
     }
 
     // Create OpenCL program from HelloWorld.cl kernel source
-    program = CreateProgram(context, device, "HelloWorld.cl");
+    program = cl_CreateProgram(context, device, "kernel.cl");
     if (program == NULL)
     {
-        Cleanup(context, commandQueue, program, kernel, memObjects);
+        cl_cleanup(context, commandQueue, program, kernel, memObjects, N_VECTORS);
         return 1;
     }
 
     // Create OpenCL kernel
-    kernel = clCreateKernel(program, "hello_kernel", NULL);
+    kernel = clCreateKernel(program, "vector_Add", NULL);
     if (kernel == NULL)
     {
         std::cerr << "Failed to create kernel" << std::endl;
-        Cleanup(context, commandQueue, program, kernel, memObjects);
+        cl_cleanup(context, commandQueue, program, kernel, memObjects, N_VECTORS);
         return 1;
     }
 
     // Create memory objects that will be used as arguments to
     // kernel.  First create host memory arrays that will be
     // used to store the arguments to the kernel
-    float result[ARRAY_SIZE];
-    float a[ARRAY_SIZE];
-    float b[ARRAY_SIZE];
-    for (int i = 0; i < ARRAY_SIZE; i++)
+    float result[VECTOR_SIZE];
+    float result_cpu[VECTOR_SIZE];
+    float a[VECTOR_SIZE];
+    float b[VECTOR_SIZE];
+    for (int i = 0; i < VECTOR_SIZE; i++)
     {
         a[i] = (float)i;
-        b[i] = (float)(i * 2);
+        b[i] = (float)(i);
     }
+    //cl_createMemObject_float((cl_context context, cl_mem memObject, int size, float * arr, int flag_rw) {
+
+    // Create 3 vectors like a
+    for (int i = 0; i < N_VECTORS; i++)
+        if (!cl_CreateMemObject(context, memObjects[i], VECTOR_SIZE, a, 1))
+        {
+            cl_cleanup(context, commandQueue, program, kernel, memObjects, N_VECTORS);
+            return 1;
+        }
 
     if (!CreateMemObjects(context, memObjects, a, b))
     {
-        Cleanup(context, commandQueue, program, kernel, memObjects);
+        cl_cleanup(context, commandQueue, program, kernel, memObjects, N_VECTORS);
         return 1;
     }
+
 
     // Set the kernel arguments (result, a, b)
     errNum = clSetKernelArg(kernel, 0, sizeof(cl_mem), &memObjects[0]);
@@ -293,43 +334,92 @@ int main(int argc, char** argv)
     if (errNum != CL_SUCCESS)
     {
         std::cerr << "Error setting kernel arguments." << std::endl;
-        Cleanup(context, commandQueue, program, kernel, memObjects);
+        cl_cleanup(context, commandQueue, program, kernel, memObjects, N_VECTORS);
         return 1;
     }
 
-    size_t globalWorkSize[1] = { ARRAY_SIZE };
+    size_t globalWorkSize[1] = { VECTOR_SIZE };
     size_t localWorkSize[1] = { 1 };
 
+    std::cout << "Vector Addition with " << VECTOR_SIZE << " Elements" <<std::endl;
+
+    start = clock();
     // Queue the kernel up for execution across the array
     errNum = clEnqueueNDRangeKernel(commandQueue, kernel, 1, NULL,
                                     globalWorkSize, localWorkSize,
                                     0, NULL, NULL);
+    end = clock();
+    printf("Tiempo GPU: %lf\n", (double ) (end - start) / CLOCKS_PER_SEC * 1000);
+
+
+    //CPU Operation for comparation
+    start = clock();
+    cpu_multi(a, b, result_cpu, VECTOR_SIZE);
+    end = clock();
+    printf("Tiempo CPU: %lf\n", (double ) (end - start) / CLOCKS_PER_SEC * 1000);
+
+
+
+
     if (errNum != CL_SUCCESS)
     {
         std::cerr << "Error queuing kernel for execution." << std::endl;
-        Cleanup(context, commandQueue, program, kernel, memObjects);
+        cl_cleanup(context, commandQueue, program, kernel, memObjects, N_VECTORS);
         return 1;
     }
 
     // Read the output buffer back to the Host
     errNum = clEnqueueReadBuffer(commandQueue, memObjects[2], CL_TRUE,
-                                 0, ARRAY_SIZE * sizeof(float), result,
+                                 0, VECTOR_SIZE * sizeof(float), result,
                                  0, NULL, NULL);
+
+
     if (errNum != CL_SUCCESS)
     {
         std::cerr << "Error reading result buffer." << std::endl;
-        Cleanup(context, commandQueue, program, kernel, memObjects);
+        cl_cleanup(context, commandQueue, program, kernel, memObjects, N_VECTORS);
         return 1;
     }
 
+
     // Output the result buffer
-    for (int i = 0; i < ARRAY_SIZE; i++)
+    /*
+    for (int i = 0; i < VECTOR_SIZE; i++)
+    {
+        std::cout << a[i] << " ";
+    }
+    std::cout << "\n";
+    for (int i = 0; i < VECTOR_SIZE; i++)
+    {
+        std::cout << b[i] << " ";
+    }
+    std::cout << "\n";
+
+    for (int i = 0; i < VECTOR_SIZE; i++)
     {
         std::cout << result[i] << " ";
     }
+
+    std::cout << "\n";
+
+
+
+    for (int i = 0; i < VECTOR_SIZE; i++)
+    {
+         std::cout << result_cpu[i] << " ";
+    }*/
+
+    if (cpu_check(result_cpu, result, VECTOR_SIZE))
+        std::cout << "Checked operation!" << std::endl;
+    else
+        std::cout << "Something wrong" << std::endl;
+
     std::cout << std::endl;
     std::cout << "Executed program succesfully." << std::endl;
-    Cleanup(context, commandQueue, program, kernel, memObjects);
+
+
+
+    cl_cleanup(context, commandQueue, program, kernel, memObjects, N_VECTORS);
 
     return 0;
 }

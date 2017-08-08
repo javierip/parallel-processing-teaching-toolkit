@@ -1,5 +1,5 @@
 
-__kernel void hello_kernel(__global const float *a,
+__kernel void vector_Add (__global const float *a,
 						__global const float *b,
 						__global float *result)
 {

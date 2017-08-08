@@ -15,7 +15,7 @@ char* readSource(const char *sourceFilename);
 
 int main(int argc, char ** argv)
 {
-   printf("Running Vector Addition program\n\n");
+   printf("Detecting Platform and Devices..\n\n");
 
    size_t datasize = sizeof(int)*ELEMENTS;
 

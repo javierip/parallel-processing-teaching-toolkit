@@ -10,4 +10,4 @@ include_directories( ${OPENCL_INCLUDE_DIRS} )
 add_executable( application-openCL main.cpp )
 target_link_libraries( application-openCL ${OPENCL_LIBRARIES} )
 
-configure_file(HelloWorld.cl ${CMAKE_CURRENT_BINARY_DIR}/HelloWorld.cl COPYONLY)
+configure_file(kernel.cl ${CMAKE_CURRENT_BINARY_DIR}/kernel.cl COPYONLY)
