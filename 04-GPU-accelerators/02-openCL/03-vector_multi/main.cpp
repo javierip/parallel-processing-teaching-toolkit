@@ -27,12 +27,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include <math.h>   /* ceil */
 
 #define  N_VECTORS 3  //Number of arrays needed
 //  Constants
-const int VECTOR_SIZE = 32;
-const int MATRIX_SIZE = VECTOR_SIZE*VECTOR_SIZE;
+const int VECTOR_SIZE = 100000;
+
 ///More cool fuction set by flash
 
 //  Create an OpenCL context on the first available platform using
@@ -80,15 +79,15 @@ cl_context cl_CreateContext()
     return context;
 }
 //  Create memory objects used as the arguments to the kernel
-bool cl_CreateMemObject(cl_context context, cl_mem memObject, int size, float *arr[], int flag_rw) {
+bool cl_CreateMemObject(cl_context context, cl_mem memObject, int size, float *arr, int flag_rw) {
 
     if (flag_rw)
         memObject = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR,
-                                   sizeof(float) * size*size, arr, NULL);
+                                   sizeof(float) * size, arr, NULL);
 
     else
         memObject = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
-                                   sizeof(float) * size*size, arr, NULL);
+                                   sizeof(float) * size, arr, NULL);
 
     if (memObject == NULL) {
         std::cerr << "Error creating memory objects." << std::endl;
@@ -104,11 +103,11 @@ bool CreateMemObjects(cl_context context, cl_mem memObjects[3],
                       float *a, float *b)
 {
     memObjects[0] = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
-                                   sizeof(float) * MATRIX_SIZE, a, NULL);
+                                   sizeof(float) * VECTOR_SIZE, a, NULL);
     memObjects[1] = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
-                                   sizeof(float) * MATRIX_SIZE, b, NULL);
+                                   sizeof(float) * VECTOR_SIZE, b, NULL);
     memObjects[2] = clCreateBuffer(context, CL_MEM_READ_WRITE,
-                                   sizeof(float) * MATRIX_SIZE, NULL, NULL);
+                                   sizeof(float) * VECTOR_SIZE, NULL, NULL);
 
     if (memObjects[0] == NULL || memObjects[1] == NULL || memObjects[2] == NULL)
     {
@@ -234,9 +233,16 @@ cl_program cl_CreateProgram(cl_context context, cl_device_id device, const char*
     return program;
 }
 
+void cpu_multi (float *arr_a, float *arr_b, float *arr_c, int n) {
 
 
-bool cpu_check(float **arr_a, float **arr_b,  int n) {
+    for (int i = 0; i < n; i++)
+        arr_c[i] = arr_a[i] * arr_b[i];
+
+}
+
+
+bool cpu_check(float *arr_a, float *arr_b,  int n) {
 
     for (int i = 0; i < n; i++)
         if (arr_b[i] != arr_a[i])
@@ -295,50 +301,30 @@ int main(int argc, char** argv)
     // Create memory objects that will be used as arguments to
     // kernel.  First create host memory arrays that will be
     // used to store the arguments to the kernel
-    float result[VECTOR_SIZE][VECTOR_SIZE];
-    float result_cpu[VECTOR_SIZE][VECTOR_SIZE];
-    float a[VECTOR_SIZE][VECTOR_SIZE];
-    float b[VECTOR_SIZE][VECTOR_SIZE];
-    for (int j = 0; j < VECTOR_SIZE; j++)
+    float result[VECTOR_SIZE];
+    float result_cpu[VECTOR_SIZE];
+    float a[VECTOR_SIZE];
+    float b[VECTOR_SIZE];
     for (int i = 0; i < VECTOR_SIZE; i++)
-        {
-            a[i][j] = (float)i;
-            b[i][j] = (float)(i);
-        }
+    {
+        a[i] = (float)i;
+        b[i] = (float)(i);
+    }
     //cl_createMemObject_float((cl_context context, cl_mem memObject, int size, float * arr, int flag_rw) {
 
     // Create 3 vectors like a
-
-    memObjects[0] = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR,
-                                   sizeof(float) * VECTOR_SIZE*VECTOR_SIZE, a, NULL);
-    memObjects[1] = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR,
-                                   sizeof(float) * VECTOR_SIZE*VECTOR_SIZE, b, NULL);
-    memObjects[2] = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
-                                   sizeof(float) * VECTOR_SIZE*VECTOR_SIZE, result, NULL);
-
-            printf("VECTOR A\n");
-        for (int i = 0; i < VECTOR_SIZE; i++){
-        for (int j = 0; j < VECTOR_SIZE; j++)
-   
-            printf("%0.1lf\t",a[i][j] );
-        printf("\n");
+    for (int i = 0; i < N_VECTORS; i++)
+        if (!cl_CreateMemObject(context, memObjects[i], VECTOR_SIZE, a, 1))
+        {
+            cl_cleanup(context, commandQueue, program, kernel, memObjects, N_VECTORS);
+            return 1;
         }
-        printf("VECTOR B\n");
-            for (int i = 0; i < VECTOR_SIZE; i++){
-        for (int j = 0; j < VECTOR_SIZE; j++)
-   
-            printf("%0.1lf\t",b[i][j] );
-        printf("\n");
-        }
-                printf("VECTOR R\n");
 
-
-    if (memObjects[0] == NULL) 
-        std::cerr << "Error creating memory objects." << std::endl;
-     if (memObjects[1] == NULL) 
-        std::cerr << "Error creating memory objects." << std::endl;
-     if (memObjects[2] == NULL) 
-        std::cerr << "Error creating memory objects." << std::endl;
+    if (!CreateMemObjects(context, memObjects, a, b))
+    {
+        cl_cleanup(context, commandQueue, program, kernel, memObjects, N_VECTORS);
+        return 1;
+    }
 
 
     // Set the kernel arguments (result, a, b)
@@ -352,14 +338,10 @@ int main(int argc, char** argv)
         return 1;
     }
 
+    size_t globalWorkSize[1] = { VECTOR_SIZE };
+    size_t localWorkSize[1] = { 1 };
 
-
-    size_t globalWorkSize[1] = { 1024 };
-    size_t localWorkSize[1] = { 16 };
-
-
-
-    std::cout << "Matrix Addition with " << VECTOR_SIZE << "*" VECTOR_SIZE << " Elements" <<std::endl;
+    std::cout << "Vector Multiplication with " << VECTOR_SIZE << " Elements" <<std::endl;
 
     start = clock();
     // Queue the kernel up for execution across the array
@@ -372,9 +354,7 @@ int main(int argc, char** argv)
 
     //CPU Operation for comparation
     start = clock();
-    for (int j = 0; j < VECTOR_SIZE; j++)
-        for (int i = 0; i < VECTOR_SIZE; i++)
-            result_cpu[i][j] = a[i][j] + b[i][j];
+    cpu_multi(a, b, result_cpu, VECTOR_SIZE);
     end = clock();
     printf("Tiempo CPU: %lf\n", (double ) (end - start) / CLOCKS_PER_SEC * 1000);
 
@@ -390,14 +370,10 @@ int main(int argc, char** argv)
 
     // Read the output buffer back to the Host
     errNum = clEnqueueReadBuffer(commandQueue, memObjects[2], CL_TRUE,
-                                 0, MATRIX_SIZE * sizeof(float), result,
+                                 0, VECTOR_SIZE * sizeof(float), result,
                                  0, NULL, NULL);
-     for (int i = 0; i < VECTOR_SIZE; i++){
-        for (int j = 0; j < VECTOR_SIZE; j++)
-   
-            printf("%0.1lf\t",result[i][j] );
-        printf("\n");
-        }
+
+
     if (errNum != CL_SUCCESS)
     {
         std::cerr << "Error reading result buffer." << std::endl;
@@ -406,25 +382,44 @@ int main(int argc, char** argv)
     }
 
 
-
-    //Check result
+    // Output the result buffer
+    /*
     for (int i = 0; i < VECTOR_SIZE; i++)
-        for (int j = 0; j < VECTOR_SIZE; j++)
-            if (result_cpu[i][j] != result[i][j]){
-                std::cout << "Something wrong" << std::endl;
-                cl_cleanup(context, commandQueue, program, kernel, memObjects, N_VECTORS);
-                break;
-            }
-           
-    std::cout << "Checked operation!" << std::endl;
+    {
+        std::cout << a[i] << " ";
+    }
+    std::cout << "\n";
+    for (int i = 0; i < VECTOR_SIZE; i++)
+    {
+        std::cout << b[i] << " ";
+    }
+    std::cout << "\n";
 
+    for (int i = 0; i < VECTOR_SIZE; i++)
+    {
+        std::cout << result[i] << " ";
+    }
+
+    std::cout << "\n";
+
+
+
+    for (int i = 0; i < VECTOR_SIZE; i++)
+    {
+         std::cout << result_cpu[i] << " ";
+    }*/
+
+    if (cpu_check(result_cpu, result, VECTOR_SIZE))
+        std::cout << "Checked operation!" << std::endl;
+    else
+        std::cout << "Something wrong" << std::endl;
 
     std::cout << std::endl;
     std::cout << "Executed program succesfully." << std::endl;
 
 
 
- 
+    cl_cleanup(context, commandQueue, program, kernel, memObjects, N_VECTORS);
 
     return 0;
 }
