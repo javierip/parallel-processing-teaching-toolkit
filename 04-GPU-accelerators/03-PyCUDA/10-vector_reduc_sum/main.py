@@ -8,7 +8,7 @@ import pycuda.autoinit
 kernel_code_template = """
 __global__ void vectorReduce(volatile float *g_idata, volatile float *g_odata)
 {
-    __shared__ float sdata[1024];
+   __shared__ float sdata[%(VECTOR_LEN)s];
 
     int tid = threadIdx.x;
     int i = blockIdx.x * (blockDim.x ) + threadIdx.x;
@@ -23,6 +23,8 @@ __global__ void vectorReduce(volatile float *g_idata, volatile float *g_odata)
         }
     }
 
+    __syncthreads();
+    
     if (tid == 0) {
         g_odata[0] = sdata[0];
 

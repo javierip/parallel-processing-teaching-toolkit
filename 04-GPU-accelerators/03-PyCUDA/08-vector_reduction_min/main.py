@@ -8,17 +8,22 @@ import pycuda.autoinit
 kernel_code_template = """
 __global__ void vectorReduce(volatile float *g_idata, volatile float *g_odata)
 {
-    __shared__ float sdata[1024];
-    __shared__  int sindice[1024];
+
+
+   __shared__ float sdata[%(VECTOR_LEN)s];
+    __shared__  int sindice[%(VECTOR_LEN)s];
+
+
 
     int tid = threadIdx.x;
     int i = blockIdx.x * (blockDim.x ) + threadIdx.x;
     sdata[tid] = g_idata[i];
-    sindice[tid] = i;
+    sindice[tid] = tid;
     __syncthreads();
 
 
-    for (unsigned int s = blockDim.x / 2; s > 0; s >>= 1) {
+
+   for (unsigned int s = blockDim.x / 2; s > 0; s >>= 1) {
 
         if (tid < s ) {
             if (sdata[tid] > sdata[tid + s]) {
@@ -26,11 +31,13 @@ __global__ void vectorReduce(volatile float *g_idata, volatile float *g_odata)
                 sindice[tid] = sindice[tid + 
                     s];
 
-            }//else sindice[tid] = sindice[tid];
+            }
             __syncthreads();
         }
 
     }
+
+     __syncthreads();
 
     if (tid == 0) {
         g_odata[0] = sdata[0];
