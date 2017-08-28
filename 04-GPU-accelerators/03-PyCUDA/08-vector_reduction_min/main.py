@@ -6,52 +6,42 @@ from pycuda import driver, compiler, gpuarray, tools
 import pycuda.autoinit
 
 kernel_code_template = """
-__global__ void vectorReduce(volatile float *g_idata, volatile float *g_odata)
+__global__ void vectorReduce(volatile float *global_input_data, volatile float *global_output_data)
 {
-
-
-   __shared__ float sdata[%(VECTOR_LEN)s];
+    __shared__ float sdata[%(VECTOR_LEN)s];
     __shared__  int sindice[%(VECTOR_LEN)s];
-
-
 
     int tid = threadIdx.x;
     int i = blockIdx.x * (blockDim.x ) + threadIdx.x;
-    sdata[tid] = g_idata[i];
+    sdata[tid] = global_input_data[i];
     sindice[tid] = tid;
     __syncthreads();
 
-
-
-   for (unsigned int s = blockDim.x / 2; s > 0; s >>= 1) {
+    for (unsigned int s = blockDim.x / 2; s > 0; s >>= 1) {
 
         if (tid < s ) {
             if (sdata[tid] > sdata[tid + s]) {
                 sdata[tid] = sdata[tid + s];
-                sindice[tid] = sindice[tid + 
-                    s];
-
+                sindice[tid] = sindice[tid + s];
             }
             __syncthreads();
         }
-
     }
 
-     __syncthreads();
+    __syncthreads();
 
     if (tid == 0) {
-        g_odata[0] = sdata[0];
+        global_output_data[0] = sdata[0];
 
     }
 
     if (tid == 1) {
-        g_odata[1] = sindice[0];
+        global_output_data[1] = sindice[0];
 
     }
 
 }
 """
-
 
 # define the (square) matrix size
 #  note that we'll only use *one* block of threads here
@@ -63,17 +53,16 @@ VECTOR_LEN = 1024
 # create two random square matrices
 a_cpu = np.random.randn(VECTOR_LEN).astype(np.float32)
 
-
 # compute reference on the CPU to verify GPU computation
 print "-" * 80
-tic=time.time()
+tic = time.time()
 minimo = a_cpu[0]
-indice_minimo= 0
-for i in range (0,VECTOR_LEN):
-	if(a_cpu[i]<minimo):
-		minimo=a_cpu[i]
-		indice_minimo=i
-time_cpu=time.time()-tic
+indice_minimo = 0
+for i in range(0, VECTOR_LEN):
+    if (a_cpu[i] < minimo):
+        minimo = a_cpu[i]
+        indice_minimo = i
+time_cpu = time.time() - tic
 
 print 'Resultado CPU:', minimo
 print 'Indice CPU:', indice_minimo
@@ -81,14 +70,14 @@ print "Time CPU:", time_cpu
 
 # transfer host (CPU) memory to device (GPU) memory 
 
-a_gpu = gpuarray.to_gpu(a_cpu) 
+a_gpu = gpuarray.to_gpu(a_cpu)
 c_gpu = gpuarray.empty((2), np.float32)
 
 # get the kernel code from the template 
 # by specifying the constant VECTOR_LEN
 
 kernel_code = kernel_code_template % {
-    'VECTOR_LEN': VECTOR_LEN 
+    'VECTOR_LEN': VECTOR_LEN
 }
 
 # compile the kernel code 
@@ -98,20 +87,19 @@ mod = compiler.SourceModule(kernel_code)
 reduction = mod.get_function("vectorReduce")
 
 # call the kernel on the card
-tic=time.time()
+tic = time.time()
 reduction(
     # inputs
     a_gpu,
     # output
     c_gpu,
     # (only one) block of VECTOR_LEN x VECTOR_LEN threads
-
-    block = (VECTOR_LEN, 1,1),
+    block=(VECTOR_LEN, 1, 1),
 )
-time_gpu=time.time()-tic
+time_gpu = time.time() - tic
 
 print "-" * 80
 print 'Resultado GPU:', c_gpu[0]
 print 'Indice GPU:', c_gpu[1]
 print "Time GPU:", time_gpu
-np.allclose(a_cpu,  a_gpu.get())
+np.allclose(a_cpu, a_gpu.get())
