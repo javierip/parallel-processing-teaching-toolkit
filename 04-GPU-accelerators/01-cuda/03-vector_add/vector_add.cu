@@ -10,16 +10,52 @@
   * Computes the vector addition of A and B into C. The 3 vectors have the same
  * number of elements numElements.
  **/
-__global__ void
-vectorAdd(const float *A, const float *B, float *C, int numElements)
+__global__ void vectorAdd(const float *A, const float *B, float *C, int numElements)
 {
     int i = blockDim.x * blockIdx.x + threadIdx.x;
 
-     if (i < numElements)
+    if (i < numElements)
     {
         C[i] = A[i] + B[i];
     }
 }
+
+__global__ void vectorReduce(const float *global_input_data, float *global_output_data, const int numElements)
+{
+    __shared__ float sdata[10];
+    __shared__  int sindice[10];
+
+    int tid = threadIdx.x;
+    int i = blockIdx.x * (blockDim.x ) + threadIdx.x;
+    sdata[tid] = global_input_data[i];
+    sindice[tid] = tid;
+    __syncthreads();
+
+    for (unsigned int s = blockDim.x / 2; s > 0; s >>= 1) {
+
+        if (tid < s ) {
+            if (sdata[tid] > sdata[tid + s]) {
+                sdata[tid] = sdata[tid + s];
+                sindice[tid] = sindice[tid + s];
+            }
+            __syncthreads();
+        }
+    }
+
+    __syncthreads();
+
+    if (tid == 0) {
+        global_output_data[0] = sdata[0];
+
+    }
+
+    if (tid == 1) {
+        global_output_data[1] = sindice[0];
+
+    }
+
+}
+
 
 /// Functions Propotypes
 //Get CUDA Platform Info
@@ -51,7 +87,7 @@ main(void)
     printf("[Vector addition of %d elements]\n", numElements);
 
 
-    //Vectors on RAM 
+    //Vectors on RAM
     float *h_A = (float *)malloc(size);
     float *h_B = (float *)malloc(size);
     float *h_C = (float *)malloc(size);
@@ -62,37 +98,37 @@ main(void)
     float *d_A = NULL;
     float *d_B = NULL;
     float *d_C = NULL;
- 
-
-     if (!check( cudaMalloc((void **)&d_A, size)))
-     {
-         printf( "Failed to allocate device vector A (error code %s)!\n");
-         fprintf(stderr, "Failed to allocate device vector A (error code %s)!\n", cudaGetErrorString(err));
-         return 0;
-     }
 
 
-     if (!check(cudaMalloc((void **)&d_B, size)))
-     {
-         printf( "Failed to allocate device vector B (error code %s)!\n");
-         fprintf(stderr, "Failed to allocate device vector B (error code %s)!\n", cudaGetErrorString(err));
-         return 0;
-     }
+    if (!check( cudaMalloc((void **)&d_A, size)))
+    {
+        printf( "Failed to allocate device vector A (error code %s)!\n");
+        fprintf(stderr, "Failed to allocate device vector A (error code %s)!\n", cudaGetErrorString(err));
+        return 0;
+    }
+
+
+    if (!check(cudaMalloc((void **)&d_B, size)))
+    {
+        printf( "Failed to allocate device vector B (error code %s)!\n");
+        fprintf(stderr, "Failed to allocate device vector B (error code %s)!\n", cudaGetErrorString(err));
+        return 0;
+    }
 
 
 
 
-     if (!check(cudaMalloc((void **)&d_C, size)))
-     {
-         printf("Failed to allocate device vector C (error code %s)!\n");
-         fprintf(stderr, "Failed to allocate device vector C (error code %s)!\n", cudaGetErrorString(err));
-         return 0;
-     }
+    if (!check(cudaMalloc((void **)&d_C, size)))
+    {
+        printf("Failed to allocate device vector C (error code %s)!\n");
+        fprintf(stderr, "Failed to allocate device vector C (error code %s)!\n", cudaGetErrorString(err));
+        return 0;
+    }
 
 
 
     printf("Copy input data from the host memory to the CUDA device\n");
-      if (!check(cudaMemcpy(d_A, h_A, size, cudaMemcpyHostToDevice)))
+    if (!check(cudaMemcpy(d_A, h_A, size, cudaMemcpyHostToDevice)))
     {
         fprintf(stderr, "Failed to copy vector A from host to device (error code %s)!\n", cudaGetErrorString(err));
         return 0;
@@ -114,7 +150,7 @@ main(void)
     vectorAdd<<<blocksPerGrid, threadsPerBlock>>>(d_A, d_B, d_C, numElements);
     end = clock();
     time_gpu= (double ) (end - start) / CLOCKS_PER_SEC * 1000;
-  
+
 
 
     if (!check(cudaGetLastError()))
@@ -139,13 +175,13 @@ main(void)
     add_cpu(h_A,h_B,h_C,numElements);
     end = clock();
     time_cpu= (double ) (end - start) / CLOCKS_PER_SEC * 1000;
- 
 
-    // Verify that the result vector is correct  
+
+    // Verify that the result vector is correct
     if(check_addition(h_A,h_B,h_C,numElements)) printf("Test PASSED\n");
 
-  printf("Time GPU: %lf\n", time_gpu);
-       printf("Time CPU: %lf\n", time_cpu);
+    printf("Time GPU: %lf\n", time_gpu);
+    printf("Time CPU: %lf\n", time_cpu);
 
     if(!free_memGPU(d_A,d_B,d_C))return 0;
 
@@ -159,12 +195,12 @@ main(void)
 }
 
 /// Functions 
- 
-void get_CUDAinfo (){
-     int nDevices;
 
-      cudaGetDeviceCount(&nDevices);
-      for (int i = 0; i < nDevices; i++) {
+void get_CUDAinfo (){
+    int nDevices;
+
+    cudaGetDeviceCount(&nDevices);
+    for (int i = 0; i < nDevices; i++) {
         cudaDeviceProp prop;
         cudaGetDeviceProperties(&prop, i);
         printf("Device Number: %d\n", i);
@@ -175,7 +211,7 @@ void get_CUDAinfo (){
                prop.memoryBusWidth);
         printf("  Peak Memory Bandwidth (GB/s): %f\n\n",
                2.0*prop.memoryClockRate*(prop.memoryBusWidth/8)/1.0e6);
-      }
+    }
 }
 bool free_memGPU (float *arr1,float *arr2,float *arr3){
 
@@ -213,20 +249,20 @@ bool  init_vectors_CPU (float *arr_A,float *arr_B,int elements){
 
 
 
-        // Verify that allocations succeeded
-        if (arr_A == NULL || arr_B == NULL )
-        {
-            fprintf(stderr, "Failed to allocate host vectors!\n");
-            return 0;
-        }
+    // Verify that allocations succeeded
+    if (arr_A == NULL || arr_B == NULL )
+    {
+        fprintf(stderr, "Failed to allocate host vectors!\n");
+        return 0;
+    }
 
-        // Initialize the host input vectors
-        for (int i = 0; i < elements; ++i)
-        {
-            arr_A[i] = rand()/(float)RAND_MAX;
-            arr_B[i] = rand()/(float)RAND_MAX;
-        }
-        return 1;
+    // Initialize the host input vectors
+    for (int i = 0; i < elements; ++i)
+    {
+        arr_A[i] = rand()/(float)RAND_MAX;
+        arr_B[i] = rand()/(float)RAND_MAX;
+    }
+    return 1;
 }
 bool pedir_memoriaGPU(float *arr_A,float *arr_B,float *arr_C,size_t d_size){
 
@@ -266,31 +302,31 @@ bool pedir_memoriaGPU(float *arr_A,float *arr_B,float *arr_C,size_t d_size){
 
 bool add_cpu(float *arr_A,float *arr_B,float *arr_C,int elements){
 
-       for (int i = 0; i < elements; ++i)
-        {
-            arr_C[i]= arr_A[i] + arr_B[i];
-          
-        }
-       return 1;
+    for (int i = 0; i < elements; ++i)
+    {
+        arr_C[i]= arr_A[i] + arr_B[i];
+
+    }
+    return 1;
 
 }
 
 bool check_addition(float *arr_A,float *arr_B,float *arr_C,int elements){
 
-       for (int i = 0; i < elements; ++i)
+    for (int i = 0; i < elements; ++i)
+    {
+        if (fabs(arr_A[i] + arr_B[i] - arr_C[i]) > 1e-5)
         {
-            if (fabs(arr_A[i] + arr_B[i] - arr_C[i]) > 1e-5)
-            {
-                fprintf(stderr, "Result verification failed at element %d!\n", i);
-                return 0;
-            }
+            fprintf(stderr, "Result verification failed at element %d!\n", i);
+            return 0;
         }
-       return 1;
+    }
+    return 1;
 
 }
 bool check (cudaError_t error ){
-      if (error != cudaSuccess) return 0;
-      //printf ("Error checkeado\n");
-      return 1;
+    if (error != cudaSuccess) return 0;
+    //printf ("Error checkeado\n");
+    return 1;
 }
 
