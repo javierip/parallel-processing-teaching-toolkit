@@ -53,11 +53,10 @@ def cpu_reduction(vector_cpu, VECTOR_LEN):
             min_value = vector_cpu[i]
             min_index = i
 
-    print 'Resultado CPU:', min_value
-    print 'Indice CPU:', min_index
+    return min_value, min_index
 
 
-# excecute reduction in CPU
+# execute reduction in CPU
 def gpu_reduction(vector_gpu, results_gpu, reduction_binary_gpu, VECTOR_LEN):
     reduction_binary_gpu(
         # inputs
@@ -67,9 +66,7 @@ def gpu_reduction(vector_gpu, results_gpu, reduction_binary_gpu, VECTOR_LEN):
         # (only one) block of VECTOR_LEN x VECTOR_LEN threads
         block=(VECTOR_LEN, 1, 1),
     )
-
-    print 'Resultado GPU:', results_gpu[0]
-    print 'Indice GPU:', results_gpu[1]
+    return results_gpu[0], results_gpu[1]
 
 
 def compare_reduction_operations(length):
@@ -80,9 +77,7 @@ def compare_reduction_operations(length):
 
     # get the kernel code from the template
     # by specifying the constant VECTOR_LEN
-    kernel_code = kernel_code_template % {
-        'VECTOR_LEN': VECTOR_LEN
-    }
+    kernel_code = kernel_code_template % {'VECTOR_LEN': VECTOR_LEN}
 
     # compile the kernel code
     mod = compiler.SourceModule(kernel_code)
@@ -91,27 +86,28 @@ def compare_reduction_operations(length):
     reduction_binary_gpu = mod.get_function("vectorReduce")
 
     # CPU reduction
-    print "-" * 80
     tic = time.time()
-
-    cpu_reduction(vector_cpu, VECTOR_LEN)
+    result, index = cpu_reduction(vector_cpu, VECTOR_LEN)
 
     time_cpu = time.time() - tic
+
+    print "-" * 80
+    print 'Result CPU:', result
+    print 'Index CPU:', index
     print "Time CPU:", time_cpu
     print "-" * 80
 
-    # transfer host (CPU) memory to device (GPU) memory
+    # GPU reduction
     tic = time.time()
-
     vector_gpu = gpuarray.to_gpu(vector_cpu)
     results_gpu = gpuarray.empty((2), np.float32)
-    gpu_reduction(vector_gpu, results_gpu, reduction_binary_gpu, VECTOR_LEN)
-
+    result, index = gpu_reduction(vector_gpu, results_gpu, reduction_binary_gpu, VECTOR_LEN)
     time_gpu = time.time() - tic
+
+    print 'Result GPU:', result
+    print 'Index GPU:', index
     print "Time GPU:", time_gpu
     print "-" * 80
-
-    np.allclose(vector_cpu, vector_gpu.get())
 
 
 if __name__ == "__main__":
