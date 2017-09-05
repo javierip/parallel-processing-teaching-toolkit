@@ -1,3 +1,10 @@
 # Python
 *.pyc 
-build
+
+# Build generated files
+build*
+
+# Popular IDEs generated files
+.idea*
+*.user
+
