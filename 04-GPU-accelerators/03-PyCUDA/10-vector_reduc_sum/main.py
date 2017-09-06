@@ -9,7 +9,6 @@ kernel_code_template = """
 __global__ void vectorReduce(volatile float *global_input_data, volatile float *global_output_data)
 {
 
-
     __shared__ float sdata[%(VECTOR_LEN)s];
 
     int tid = threadIdx.x;
@@ -24,15 +23,14 @@ __global__ void vectorReduce(volatile float *global_input_data, volatile float *
 
     while(s>1){
 
-
+        
         __syncthreads();
 
          if (tid < s ) {
         
-                sdata[tid] += sdata[tid + s];
-            
-
-            
+            sdata[tid] += sdata[tid + s];
+            sdata[tid + s] = 0;
+                 
             __syncthreads();
         }      
 
@@ -44,17 +42,23 @@ __global__ void vectorReduce(volatile float *global_input_data, volatile float *
         __syncthreads();
 
         if(s<=0)break;
+     
 
     }
 
      __syncthreads();
 
      if (tid == 0){
+
         sdata[0]+=sdata[1];
+
+        if((%(VECTOR_LEN)s)%%2!=0){
+
+            sdata[0]+=sdata[%(VECTOR_LEN)s-1];
+            }
+
     }   
              
-    
-
     if (tid == 0) {
         *global_output_data = sdata[0];
 
@@ -75,7 +79,7 @@ def cpu_reduction(vector_cpu, VECTOR_LEN):
 
     return sum_value
 
-# execute reduction in CPU
+# execute reduction in GPU
 def gpu_reduction(vector_gpu, results_gpu, reduction_binary_gpu, VECTOR_LEN):
     reduction_binary_gpu(
         # inputs
@@ -93,7 +97,7 @@ def compare_reduction_operations(length):
 
     # create a vector of random float numbers
     vector_cpu = np.random.randn(VECTOR_LEN).astype(np.float32)
-
+    
     # get the kernel code from the template
     # by specifying the constant VECTOR_LEN
     kernel_code = kernel_code_template % {'VECTOR_LEN': VECTOR_LEN}

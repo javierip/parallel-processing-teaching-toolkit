@@ -30,9 +30,9 @@ __global__ void vectorReduce(volatile float *global_input_data, volatile float *
 
          if (tid < s ) {
             if (sdata[tid] <= sdata[tid + s]) {
+
                 sdata[tid] = sdata[tid + s];
-                sindice[tid] = sindice[tid + 
-                    s];
+                sindice[tid] = sindice[tid + s];
 
             }
             __syncthreads();
@@ -53,9 +53,17 @@ __global__ void vectorReduce(volatile float *global_input_data, volatile float *
 
      if (tid == 0) {
         if(sdata[0]<sdata[1]){
-             sdata[0]=sdata[1];
-             sindice[0]=sindice[1];
-             }
+
+            sdata[0]=sdata[1];
+            sindice[0]=sindice[1];
+
+            }
+        if(sdata[0]<sdata[%(VECTOR_LEN)s-1]){
+
+            sdata[0]=sdata[%(VECTOR_LEN)s-1];
+            sindice[0]=sindice[%(VECTOR_LEN)s-1];   
+
+            }
     }
 
     if (tid == 0) {
