@@ -6,87 +6,130 @@ from pycuda import driver, compiler, gpuarray, tools
 import pycuda.autoinit
 
 kernel_code_template = """
-__global__ void vectorReduce(volatile float *g_idata, volatile float *g_odata)
+__global__ void vectorReduce(volatile float *global_input_data, volatile float *global_output_data)
 {
-   __shared__ float sdata[%(VECTOR_LEN)s];
+
+    __shared__ float sdata[%(VECTOR_LEN)s];
 
     int tid = threadIdx.x;
     int i = blockIdx.x * (blockDim.x ) + threadIdx.x;
-    sdata[tid] = g_idata[i];
+    sdata[tid] = global_input_data[i];
+
 
     __syncthreads();
 
-    for (unsigned int s = blockDim.x / 2; s > 0; s >>= 1) {
-        if (tid < s ) {
+
+    int s = blockDim.x / 2; 
+
+    while(s>1){
+
+        
+        __syncthreads();
+
+         if (tid < s ) {
+        
             sdata[tid] += sdata[tid + s];
+            sdata[tid + s] = 0;
+                 
             __syncthreads();
-        }
+        }      
+
+        if(s%%2==0)
+            s=s/2;
+        else
+            s=(s+1)/2;
+
+        __syncthreads();
+
+        if(s<=0)break;
+     
+
     }
 
-    __syncthreads();
-    
+     __syncthreads();
+
+     if (tid == 0){
+
+        sdata[0]+=sdata[1];
+
+        if((%(VECTOR_LEN)s)%%2!=0){
+
+            sdata[0]+=sdata[%(VECTOR_LEN)s-1];
+            }
+
+    }   
+             
     if (tid == 0) {
-        g_odata[0] = sdata[0];
+        *global_output_data = sdata[0];
 
     }
+
+ 
 }
 """
 
-# define the (square) matrix size
-#  note that we'll only use *one* block of threads here
-#  as a consequence this number (squared) can't exceed max_threads,
-#  see http://documen.tician.de/pycuda/util.html#pycuda.tools.DeviceData
-#  for more information on how to get this number for your device
-VECTOR_LEN = 1024
 
-# create two random square matrices
-a_cpu = np.random.randn(VECTOR_LEN).astype(np.float32)
+# excecute reduction in CPU
+def cpu_reduction(vector_cpu, VECTOR_LEN):
+    sum_value = 0
+
+    for i in range(0, VECTOR_LEN):
+        sum_value += vector_cpu[i]
 
 
-# compute reference on the CPU to verify GPU computation
-print "-" * 80
-tic=time.time()
-summ = 0
-for i in range (0,VECTOR_LEN):
-    summ+=a_cpu[i]
+    return sum_value
 
-time_cpu=time.time()-tic
+# execute reduction in GPU
+def gpu_reduction(vector_gpu, results_gpu, reduction_binary_gpu, VECTOR_LEN):
+    reduction_binary_gpu(
+        # inputs
+        vector_gpu,
+        # output
+        results_gpu,
+        # (only one) block of VECTOR_LEN x VECTOR_LEN threads
+        block=(VECTOR_LEN, 1, 1),
+    )
+    return results_gpu
 
-print 'Resultado CPU:', summ
-print "Time CPU:", time_cpu
 
-# transfer host (CPU) memory to device (GPU) memory
+def compare_reduction_operations(length):
+    VECTOR_LEN = length
 
-a_gpu = gpuarray.to_gpu(a_cpu)
-c_gpu = gpuarray.empty((2), np.float32)
+    # create a vector of random float numbers
+    vector_cpu = np.random.randn(VECTOR_LEN).astype(np.float32)
+    
+    # get the kernel code from the template
+    # by specifying the constant VECTOR_LEN
+    kernel_code = kernel_code_template % {'VECTOR_LEN': VECTOR_LEN}
 
-# get the kernel code from the template 
-# by specifying the constant VECTOR_LEN
+    # compile the kernel code
+    mod = compiler.SourceModule(kernel_code)
 
-kernel_code = kernel_code_template % {
-    'VECTOR_LEN': VECTOR_LEN 
-}
+    # get the kernel function from the compiled module
+    reduction_binary_gpu = mod.get_function("vectorReduce")
 
-# compile the kernel code 
-mod = compiler.SourceModule(kernel_code)
+    # CPU reduction
+    tic = time.time()
+    result = cpu_reduction(vector_cpu, VECTOR_LEN)
 
-# get the kernel function from the compiled module
-reduction = mod.get_function("vectorReduce")
+    time_cpu = time.time() - tic
 
-# call the kernel on the card
-tic=time.time()
-reduction(
-    # inputs
-    a_gpu,
-    # output
-    c_gpu,
-    # (only one) block of VECTOR_LEN x VECTOR_LEN threads
+    print "-" * 80
+    print 'Result CPU:', result
+    print "Time CPU:", time_cpu
+    print "-" * 80
 
-    block = (VECTOR_LEN, 1,1),
-)
-time_gpu=time.time()-tic
+    # GPU reduction
+    tic = time.time()
+    vector_gpu = gpuarray.to_gpu(vector_cpu)
+    results_gpu = gpuarray.empty((1), np.float32)
+    result = gpu_reduction(vector_gpu, results_gpu, reduction_binary_gpu, VECTOR_LEN)
+    time_gpu = time.time() - tic
 
-print "-" * 80
-print 'Resultado GPU:', c_gpu[0]
-print "Time GPU:", time_gpu
-np.allclose(a_cpu,  a_gpu.get())
+    print 'Result GPU:', result
+    print "Time GPU:", time_gpu
+    print "-" * 80
+
+
+if __name__ == "__main__":
+    compare_reduction_operations(1024)

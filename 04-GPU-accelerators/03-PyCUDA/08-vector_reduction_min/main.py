@@ -15,20 +15,54 @@ __global__ void vectorReduce(volatile float *global_input_data, volatile float *
     int i = blockIdx.x * (blockDim.x ) + threadIdx.x;
     sdata[tid] = global_input_data[i];
     sindice[tid] = tid;
+
     __syncthreads();
 
-    for (unsigned int s = blockDim.x / 2; s > 0; s >>= 1) {
 
-        if (tid < s ) {
-            if (sdata[tid] > sdata[tid + s]) {
+    int s = blockDim.x / 2; 
+
+    while(s>1){
+
+
+        __syncthreads();
+
+         if (tid < s ) {
+            if (sdata[tid] >= sdata[tid + s]) {
+            
                 sdata[tid] = sdata[tid + s];
                 sindice[tid] = sindice[tid + s];
+
             }
             __syncthreads();
-        }
+        }      
+
+        if(s%%2==0)
+            s=s/2;
+        else
+            s=(s+1)/2;
+
+        __syncthreads();
+
+        if(s<=0)break;
+
     }
 
-    __syncthreads();
+     __syncthreads();
+
+     if (tid == 0) {
+        if(sdata[0]>sdata[1]){
+  
+            sdata[0]=sdata[1];
+            sindice[0]=sindice[1];
+
+            }
+		if(sdata[0]>sdata[%(VECTOR_LEN)s-1]){
+
+	   		sdata[0]=sdata[%(VECTOR_LEN)s-1];
+	    	sindice[0]=sindice[%(VECTOR_LEN)s-1];	
+
+            }
+    }
 
     if (tid == 0) {
         global_output_data[0] = sdata[0];
@@ -74,7 +108,7 @@ def compare_reduction_operations(length):
 
     # create a vector of random float numbers
     vector_cpu = np.random.randn(VECTOR_LEN).astype(np.float32)
-
+    
     # get the kernel code from the template
     # by specifying the constant VECTOR_LEN
     kernel_code = kernel_code_template % {'VECTOR_LEN': VECTOR_LEN}
@@ -111,4 +145,5 @@ def compare_reduction_operations(length):
 
 
 if __name__ == "__main__":
-    compare_reduction_operations(1024)
+    
+    compare_reduction_operations(128)
