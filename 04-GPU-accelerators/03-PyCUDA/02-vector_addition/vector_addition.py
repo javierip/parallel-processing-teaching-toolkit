@@ -9,14 +9,13 @@ from pycuda import driver, compiler, gpuarray, tools
 # -- initialize the device
 import pycuda.autoinit
 
-
 kernel_code_template = """
 __global__ void  vectorAdd(volatile float *a_gpu, volatile float *b_gpu, float *res_gpu)
 {
 
-int tid = blockIdx.x * blockDim.x + threadIdx.x;
+    int tid = blockIdx.x * blockDim.x + threadIdx.x;
 
-res_gpu[tid] = a_gpu[tid] + b_gpu[tid];
+    res_gpu[tid] = a_gpu[tid] + b_gpu[tid];
 
 }
 """
@@ -31,17 +30,15 @@ VECTOR_SIZE = 1024
 # create two random square matrices
 a_cpu = np.random.randn(VECTOR_SIZE).astype(np.float32)
 b_cpu = np.random.randn(VECTOR_SIZE).astype(np.float32)
-res_cpu= np.zeros(VECTOR_SIZE).astype(np.float32)
-
+res_cpu = np.zeros(VECTOR_SIZE).astype(np.float32)
 
 # compute reference on the CPU to verify GPU computation
-tic=time.time()
+tic = time.time()
 
-for i in range (0,VECTOR_SIZE):
-    res_cpu[i]=a_cpu[i]+b_cpu[i]
+for i in range(0, VECTOR_SIZE):
+    res_cpu[i] = a_cpu[i] + b_cpu[i]
 
-
-time_cpu=time.time()-tic
+time_cpu = time.time() - tic
 
 # transfer host (CPU) memory to device (GPU) memory
 
@@ -63,7 +60,7 @@ mod = compiler.SourceModule(kernel_code)
 reduction = mod.get_function("vectorAdd")
 
 # call the kernel on the card
-tic=time.time()
+tic = time.time()
 reduction(
     # inputs
     a_gpu,
@@ -71,21 +68,19 @@ reduction(
     # output
     res_gpu,
     # (only one) block of VECTOR_SIZE x VECTOR_SIZE threads
-    #grid =
+    # grid =
 
-    block = (VECTOR_SIZE, 1,1),
-    #grid=(65536,1,1)
+    block=(VECTOR_SIZE, 1, 1),
+    # grid=(65536,1,1)
 )
-time_gpu=time.time()-tic
+time_gpu = time.time() - tic
 
 print "-" * 80
 print 'Resultado CPU:', res_cpu
 print 'Resultado GPU:', res_gpu.get()
 print 'Check: '
-print res_cpu-res_gpu.get()
+print res_cpu - res_gpu.get()
 print "Vector Addition"
 print "Vector Size:", VECTOR_SIZE
 print "Time CPU:", time_cpu
 print "Time GPU:", time_gpu
-
-np.allclose(a_cpu,  a_gpu.get(), res_gpu.get())
