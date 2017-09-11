@@ -19,7 +19,7 @@ int main () {
         for (j = 0; j < actualRow; j++)
             b[i][j] = i + j;
 
-    #pragma omp parallel for default(none) \
+#pragma omp parallel for default(none) \
     private(threadID, i, j, sum) shared(actualColumn, actualRow, a, b, c, totalNumberThreads)
     for (i = 0; i < actualColumn; i++)
     {
