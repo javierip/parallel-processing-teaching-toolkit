@@ -9,71 +9,66 @@ kernel_code_template = """
 __global__ void vectorReduce(volatile float *global_input_data, volatile float *global_output_data)
 {
     __shared__ float sdata[%(VECTOR_LEN)s];
-    __shared__  int sindice[%(VECTOR_LEN)s];
-
+    __shared__  int sindice[%(VECTOR_LEN)s];    
+    
     int tid = threadIdx.x;
     int i = blockIdx.x * (blockDim.x ) + threadIdx.x;
     sdata[tid] = global_input_data[i];
     sindice[tid] = tid;
-
-    __syncthreads();
-
-
+    
+    __syncthreads();    
+    
     int s = blockDim.x / 2; 
-
-    while(s>1){
-
-
-        __syncthreads();
-
-         if (tid < s ) {
+    
+    while(s>1){        
+        
+        __syncthreads();        
+        if (tid < s ) {
             if (sdata[tid] >= sdata[tid + s]) {
-            
+                
                 sdata[tid] = sdata[tid + s];
                 sindice[tid] = sindice[tid + s];
-
+                
             }
             __syncthreads();
         }      
-
+        
         if(s%%2==0)
             s=s/2;
         else
             s=(s+1)/2;
-
+        
         __syncthreads();
-
+        
         if(s<=0)break;
-
+        
     }
-
-     __syncthreads();
-
-     if (tid == 0) {
+    
+    __syncthreads();
+    
+    if (tid == 0) {
         if(sdata[0]>sdata[1]){
-  
+            
             sdata[0]=sdata[1];
             sindice[0]=sindice[1];
-
-            }
-		if(sdata[0]>sdata[%(VECTOR_LEN)s-1]){
-
-	   		sdata[0]=sdata[%(VECTOR_LEN)s-1];
-	    	sindice[0]=sindice[%(VECTOR_LEN)s-1];	
-
-            }
+            
+        }
+        if(sdata[0]>sdata[%(VECTOR_LEN)s-1]){
+            
+            sdata[0]=sdata[%(VECTOR_LEN)s-1];
+            sindice[0]=sindice[%(VECTOR_LEN)s-1];	
+            
+        }
     }
-
+    
     if (tid == 0) {
         global_output_data[0] = sdata[0];
-
-    }
-
+        
+    }    
     if (tid == 1) {
         global_output_data[1] = sindice[0];
-
-    }
-
+        
+    }    
 }
 """
 
