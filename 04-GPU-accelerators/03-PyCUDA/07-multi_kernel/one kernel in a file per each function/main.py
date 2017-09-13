@@ -3,7 +3,8 @@ from pycuda import driver, compiler, gpuarray, tools
 import numpy as np
 import time
 
-from gpu_functions import *
+from gpu_functions.addition import *
+
 
 
 def cpu_operation(vector_a,vector_b, vector_res, VECTOR_LEN, option):
@@ -84,8 +85,8 @@ def compare_cpu_vs_gpu_operations(length):
 	if(option==1):	
 		# get the kernel code from the template
 		# by specifying the constant VECTOR_LEN
-		kernel_code = kernel_code_addtion % {'VECTOR_LEN': VECTOR_LEN}	
-		
+		#kernel_code = kernel_code_addtion % {'VECTOR_LEN': VECTOR_LEN}	
+		kernel_code = kernel_code_addtion 
 	elif (option==2):
 		kernel_code = kernel_code_multi % {'VECTOR_LEN': VECTOR_LEN}	
 		
