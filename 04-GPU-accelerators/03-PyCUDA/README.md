@@ -12,3 +12,4 @@ Here is a list of examples:
 8. [Vector reduction to find min](./08-vector_reduction_min )
 9. [Vector reduction to find max](./09-vector_reduc_max)
 10. [Vector reduction to calculate the sum](./10-vector_reduc_sum)
+11. [Sort a vector](11-vector_sort)
