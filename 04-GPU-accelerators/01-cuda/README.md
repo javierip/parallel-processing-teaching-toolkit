@@ -7,3 +7,4 @@ Here is a list of examples:
 3. [Vector addition using CUDA](./03-vector_add)
 4. [Vector multiplication using CUDA](./04-vector_multi)
 5. [Vector reduction using CUDA](./05-vector_reduction)
+6. [Explores the use of the block sizes using CUDA](./06-block_size)
