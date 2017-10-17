@@ -35,6 +35,4 @@ Time GPU: 0.000946044921875
 ```
 
 ## Extra Resources
-
- * [OpenCL Programming Guide 1.2 Examples](https://github.com/bgaster/opencl-book-samples).
  * [NVIDIA toolkit documentation](https://developer.nvidia.com/cuda-toolkit).
