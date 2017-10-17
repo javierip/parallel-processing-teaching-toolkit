@@ -1,7 +1,6 @@
-/**
-  This exampis is based on the article titled CUDA Pro Tip: Occupancy API Simplifies Launch Configuration.
+/**  
+  This example is based on the article titled "CUDA Pro Tip: Occupancy API Simplifies Launch Configuration".
   More info on https://devblogs.nvidia.com/parallelforall/cuda-pro-tip-occupancy-api-simplifies-launch-configuration/
-
 */
 
 #include "stdio.h"
@@ -64,7 +63,6 @@ void resetData(int *array, int count){
 
 void verifyData(int *array, int count){
     bool isDataCorrect = true;
-    // Verify the return data
 
     for (int i = 0; i < count; i += 1) {
         if (array[i] != i * i) {
@@ -78,28 +76,27 @@ void verifyData(int *array, int count){
 int main()
 {
     const int count = 1000000;
-    int *array;
-    int *dArray;
+    int *hostArray;
+    int *deviceArray;
     int size = count * sizeof(int);
 
-    array = new int[count];
+    hostArray = new int[count];
 
-    initializeData(array, count);
+    initializeData(hostArray, count);
 
-    //Maximize occupancy
-    cudaMalloc(&dArray, size);
-    cudaMemcpy(dArray, array, size, cudaMemcpyHostToDevice);
+    cudaMalloc(&deviceArray, size);
+    cudaMemcpy(deviceArray, hostArray, size, cudaMemcpyHostToDevice);
 
-    resetData(array, count);
+    resetData(hostArray, count);
 
-    launchMaxOccupancyKernel(dArray, count);
+    launchMaxOccupancyKernel(deviceArray, count);
 
-    cudaMemcpy(array, dArray, size, cudaMemcpyDeviceToHost);
-    verifyData(array, count);
+    cudaMemcpy(hostArray, deviceArray, size, cudaMemcpyDeviceToHost);
+    verifyData(hostArray, count);
 
-    cudaFree(dArray);
+    cudaFree(deviceArray);
 
-    delete[] array;
+    delete[] hostArray;
 
     return 0;
 }
