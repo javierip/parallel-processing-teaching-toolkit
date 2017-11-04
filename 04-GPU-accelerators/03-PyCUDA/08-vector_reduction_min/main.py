@@ -90,7 +90,7 @@ def cpu_reduction(vector_cpu, VECTOR_LEN):
     return min_value, min_index
 
 
-# execute reduction in CPU
+# execute reduction in GPU
 def gpu_reduction(vector_gpu, results_gpu, reduction_binary_gpu, VECTOR_LEN):
     reduction_binary_gpu(
         # inputs

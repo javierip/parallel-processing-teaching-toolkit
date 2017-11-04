@@ -85,11 +85,11 @@ __global__ void MatrixMulKernel(float *A, float *B, float *C)
 """
 
 # define the (square) matrix size
-MATRIX_SIZE = 4
+MATRIX_SIZE = 33
 
 # define size of blocks and tiles sub-matrix
 # (we assume that the block size is same as tile size)
-TILE_SIZE = 2
+TILE_SIZE = 4
 BLOCK_SIZE = TILE_SIZE
 
 # create two random square matrices
