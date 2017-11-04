@@ -33,6 +33,8 @@ def gpu_operation(vector_a,vector_b, results_gpu,binary_kernel, VECTOR_LEN):
 	driver.init()
 	dev = driver.Device(0) 
 
+	MAX_THREADS_PER_BLOCK=dev.get_attributes()[2] #1024
+
 	MAX_BLOCK_DIM_X=dev.get_attributes()[2] #1024
 	MAX_BLOCK_DIM_Y=dev.get_attributes()[3] #1024
 	MAX_BLOCK_DIM_Z=dev.get_attributes()[4] #64
@@ -41,6 +43,10 @@ def gpu_operation(vector_a,vector_b, results_gpu,binary_kernel, VECTOR_LEN):
 	MAX_GRID_DIM_Y=dev.get_attributes()[6] #65535
 	MAX_GRID_DIM_Z=dev.get_attributes()[7] #65535
 
+	MAX_SHARED_MEMORY_PER_BLOCK=dev.get_attributes()[8] #49152
+	
+	print dev.name()
+	print 'MAX_THREADS_PER_BLOCK=',MAX_THREADS_PER_BLOCK
 	print '*' * 50
 	print 'MAX_BLOCK_DIM_X=',MAX_BLOCK_DIM_X
 	print 'MAX_BLOCK_DIM_Y=',MAX_BLOCK_DIM_Y
@@ -49,6 +55,8 @@ def gpu_operation(vector_a,vector_b, results_gpu,binary_kernel, VECTOR_LEN):
 	print 'MAX_GRID_DIM_X=' ,MAX_GRID_DIM_X
 	print 'MAX_GRID_DIM_Y=' ,MAX_GRID_DIM_Y
 	print 'MAX_GRID_DIM_Z=' ,MAX_GRID_DIM_Z
+	print '*' * 50
+	print 'MAX_SHARED_MEMORY_PER_BLOCK=' ,MAX_SHARED_MEMORY_PER_BLOCK
 	print '*' * 50
 	#attrs.iteritems()
 	

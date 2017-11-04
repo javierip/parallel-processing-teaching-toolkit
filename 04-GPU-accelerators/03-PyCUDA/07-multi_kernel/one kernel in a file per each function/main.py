@@ -3,7 +3,11 @@ from pycuda import driver, compiler, gpuarray, tools
 import numpy as np
 import time
 
-from gpu_functions.addition import *
+#from gpu_functions import *
+
+
+
+from addition import kernel_code_addtion
 
 
 
@@ -59,7 +63,6 @@ def compare_cpu_vs_gpu_operations(length):
 	a_cpu =  np.random.randint(1,10,size=VECTOR_LEN).astype(np.float32)
 	b_cpu =  np.random.randint(1,10,size=VECTOR_LEN).astype(np.float32)
 
-
 	res_cpu =  np.zeros(VECTOR_LEN, np.float32)
 
 	# transfer host (CPU) memory to device (GPU) memory
@@ -82,13 +85,15 @@ def compare_cpu_vs_gpu_operations(length):
 	option=select_operation()
 	option =1
 	
+	
+	
 	if(option==1):	
 		# get the kernel code from the template
 		# by specifying the constant VECTOR_LEN
 		#kernel_code = kernel_code_addtion % {'VECTOR_LEN': VECTOR_LEN}	
 		kernel_code = kernel_code_addtion 
 	elif (option==2):
-		kernel_code = kernel_code_multi % {'VECTOR_LEN': VECTOR_LEN}	
+		kernel_code = kernel_code_multi  % {'VECTOR_LEN': VECTOR_LEN}	
 		
 	elif (option==3):    
 		kernel_code = kernel_code_div % {'VECTOR_LEN': VECTOR_LEN}	

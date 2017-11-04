@@ -73,7 +73,7 @@ __global__ void MatrixMulKernel2(float *A, float *B, float *C)
       // Shared memory for the sub-matrix of A
       __shared__ float As[%(BLOCK_SIZE)s][%(BLOCK_SIZE)s];
       // Shared memory for the sub-matrix of B
-      __shared__ float Bs[%(BLOCK_SIZE)s][%(BLOCK_SIZE)s];
+      __shared__ float Bs[%(BLOCK_SIZE)s][%(BLOCK_SIZE)s];e
 
       // Load the matrices from global memory to shared memory
       // each thread loads one element of each matrix
