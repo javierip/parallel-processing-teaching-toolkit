@@ -98,15 +98,14 @@ def gpu_reduction(vector_gpu, results_gpu, reduction_binary_gpu, VECTOR_LEN):
     return results_gpu[0], results_gpu[1]
 
 
-def compare_reduction_operations(length):
-    VECTOR_LEN = length
-
+def compare_reduction_operations(vector_length):
     # create a vector of random float numbers
-    vector_cpu = np.random.randn(VECTOR_LEN).astype(np.float32)
-    
+    vector_cpu = np.arange(vector_length).astype(np.float32)
+    #vector_cpu = vector_cpu[::-1]
+
     # get the kernel code from the template
     # by specifying the constant VECTOR_LEN
-    kernel_code = kernel_code_template % {'VECTOR_LEN': VECTOR_LEN}
+    kernel_code = kernel_code_template % {'VECTOR_LEN': vector_length}
 
     # compile the kernel code
     mod = compiler.SourceModule(kernel_code)
@@ -116,7 +115,7 @@ def compare_reduction_operations(length):
 
     # CPU reduction
     tic = time.time()
-    result, index = cpu_reduction(vector_cpu, VECTOR_LEN)
+    result, index = cpu_reduction(vector_cpu, vector_length)
 
     time_cpu = time.time() - tic
 
@@ -130,7 +129,7 @@ def compare_reduction_operations(length):
     tic = time.time()
     vector_gpu = gpuarray.to_gpu(vector_cpu)
     results_gpu = gpuarray.empty((2), np.float32)
-    result, index = gpu_reduction(vector_gpu, results_gpu, reduction_binary_gpu, VECTOR_LEN)
+    result, index = gpu_reduction(vector_gpu, results_gpu, reduction_binary_gpu, vector_length)
     time_gpu = time.time() - tic
 
     print 'Result GPU:', result
@@ -140,5 +139,4 @@ def compare_reduction_operations(length):
 
 
 if __name__ == "__main__":
-    
     compare_reduction_operations(128)
