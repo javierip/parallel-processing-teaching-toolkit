@@ -41,5 +41,5 @@ SIZE: 9 SUCCESS  - error:  4.76837e-07 (32, 32, 1) (1, 1, 1)
 
 ## Extra Resources
 
- * [OpenCL Programming Guide 1.2 Examples](https://github.com/bgaster/opencl-book-samples).
+ * [PyCuda Examples](https://andreask.cs.illinois.edu/PyCuda/Examples).
  * [NVIDIA toolkit documentation](https://developer.nvidia.com/cuda-toolkit).
