@@ -13,3 +13,8 @@ Here is a list of examples:
 9. [Vector reduction to find max](./09-vector_reduc_max)
 10. [Vector reduction to calculate the sum](./10-vector_reduc_sum)
 11. [Sort a vector](11-vector_sort)
+12. [Grids and blocks](12-grids-and-blocks)
+13. [Device attibutes](13-device-attributes)
+
+
+

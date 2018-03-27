@@ -10,7 +10,10 @@ import time
 # -- initialize the device
 import pycuda.autoinit
 
-kernel_code_template = """
+USE_SIMPLE_KERNEL = 0
+USE_TILED_KERNEL = 1
+
+kernel_source_code = """
 __global__ void MatrixMulKernel(float *a, float *b, float *c)
 {    
     int tx = threadIdx.x + blockIdx.x * blockDim.x;
@@ -39,8 +42,9 @@ __global__ void MatrixMulKernel(float *a, float *b, float *c)
     }
 }
 
-__global__ void MatrixMulKernelTilled(float *A, float *B, float *C)
-{   
+__global__ void MatrixMulKernelTiled(float *A, float *B, float *C)
+{
+    
     const uint wA = %(MATRIX_SIZE)s;
     const uint wB = %(MATRIX_SIZE)s;
     
@@ -52,11 +56,10 @@ __global__ void MatrixMulKernelTilled(float *A, float *B, float *C)
     const uint tx = threadIdx.x;
     const uint ty = threadIdx.y;
     
-    int txx = threadIdx.x + blockIdx.x * blockDim.x;
-    int tyy = threadIdx.y + blockIdx.y * blockDim.y;  
+    uint xIndex = tx + bx * tx ;
     
-    if (tyy < %(MATRIX_SIZE)s && txx < %(MATRIX_SIZE)s)        
-    {
+    
+    //if (xIndex < wA){ 
         
         // Index of the first sub-matrix of A processed by the block
         const uint aBegin = wA * %(BLOCK_SIZE)s * by;
@@ -94,7 +97,7 @@ __global__ void MatrixMulKernelTilled(float *A, float *B, float *C)
             // Multiply the two matrices together;
             // each thread computes one element
             // of the block sub-matrix
-            for (int k = 0; k < %(BLOCK_SIZE)s, k <%(MATRIX_SIZE)s ; ++k)
+            for (int k = 0; k < %(BLOCK_SIZE)s; ++k)
                 Csub += As[ty][k] * Bs[k][tx];
             
             // Synchronize to make sure that the preceding
@@ -105,11 +108,11 @@ __global__ void MatrixMulKernelTilled(float *A, float *B, float *C)
         
         // Write the block sub-matrix to global memory;
         // each thread writes one element
-        
         const uint c = wB * %(BLOCK_SIZE)s * by + %(BLOCK_SIZE)s * bx;
         C[c + wB * ty + tx] = Csub;
-    }    
+    //}
 }
+
 """
 
 
@@ -117,10 +120,20 @@ def cpu_operation(matrix_a, matrix_b):
     return np.dot(matrix_a, matrix_b)
 
 
-def gpu_operation(matrix_a, matrix_b, results_gpu, flag_tilled, MATRIX_SIZE):
-    driver.init()
-    dev = driver.Device(0)
+def gpu_operation(matrix_a, matrix_b, results_gpu, kernel_binary, grid, blocks):
+    kernel_binary(
+        # inputs
+        matrix_a, matrix_b,
+        # output
+        results_gpu,
+        block=blocks,
+        grid=grid
+    )
 
+    return results_gpu
+
+
+def print_device_properties(dev):
     MAX_BLOCK_DIM_X = dev.get_attributes()[2]  # 1024
     MAX_BLOCK_DIM_Y = dev.get_attributes()[3]  # 1024
     MAX_BLOCK_DIM_Z = dev.get_attributes()[4]  # 64
@@ -131,81 +144,85 @@ def gpu_operation(matrix_a, matrix_b, results_gpu, flag_tilled, MATRIX_SIZE):
 
     MAX_THREAD_PER_BLOCK = dev.get_attributes()[1]  # 1024
 
-    PRINT_SPECS = 0
-    if PRINT_SPECS:
-        print('*' * 50)
-        print('MAX_BLOCK_DIM_X=', MAX_BLOCK_DIM_X)
-        print('MAX_BLOCK_DIM_Y=', MAX_BLOCK_DIM_Y)
-        print('MAX_BLOCK_DIM_Z=', MAX_BLOCK_DIM_Z)
+    print('Device attributes: *******************************')
+    print('MAX_BLOCK_DIM_X=', MAX_BLOCK_DIM_X)
+    print('MAX_BLOCK_DIM_Y=', MAX_BLOCK_DIM_Y)
+    print('MAX_BLOCK_DIM_Z=', MAX_BLOCK_DIM_Z)
 
-        print('MAX_GRID_DIM_X=', MAX_GRID_DIM_X)
-        print('MAX_GRID_DIM_Y=', MAX_GRID_DIM_Y)
-        print('MAX_GRID_DIM_Z=', MAX_GRID_DIM_Z)
-        print('MAX_THREAD_PER_BLOCK=', MAX_THREAD_PER_BLOCK)
-        print('*' * 50)
+    print('MAX_GRID_DIM_X=', MAX_GRID_DIM_X)
+    print('MAX_GRID_DIM_Y=', MAX_GRID_DIM_Y)
+    print('MAX_GRID_DIM_Z=', MAX_GRID_DIM_Z)
+    print('MAX_THREAD_PER_BLOCK=', MAX_THREAD_PER_BLOCK)
+    print('*' * 50)
 
-    THREADS = int(np.sqrt(MAX_THREAD_PER_BLOCK))
 
-    bdim = (THREADS, THREADS, 1)
+def gpu_compile_kernel(kernel_type, matrix_size):
+    driver.init()
+    dev = driver.Device(0)
 
-    dx, mx = divmod(MATRIX_SIZE - 1, bdim[0])
-    dy, my = divmod(MATRIX_SIZE - 1, bdim[1])
+    # print_device_properties(dev)
+    MAX_THREAD_PER_BLOCK = dev.get_attributes()[1]  # 1024
 
-    gdim = (dx + 1, dy + 1, 1)
+    threads_per_block = int(np.sqrt(MAX_THREAD_PER_BLOCK))
+    number_of_blocks = int(matrix_size / threads_per_block)
 
-    kernel_code = kernel_code_template % {
-        'MATRIX_SIZE': MATRIX_SIZE,
-        'BLOCK_SIZE': bdim[0],
+    # check if a new tile is required
+    if (number_of_blocks * threads_per_block) < matrix_size:
+        number_of_blocks = number_of_blocks + 1
 
-    }
+    print('## Kernel variables: ******************************')
+    print('matriz size = ', matrix_size)
+    print('threads per block = ', threads_per_block)
+    print('number of blocks = ', number_of_blocks)
+    print('*' * 50)
 
-    # compile the kernel code 
-    mod = compiler.SourceModule(kernel_code)
+    grid = (threads_per_block, threads_per_block, 1)
+
+    blocks = (number_of_blocks, number_of_blocks, 1)
+
+    kernel_code = kernel_source_code % {'MATRIX_SIZE': matrix_size, 'BLOCK_SIZE': threads_per_block}
 
     # get the kernel function from the compiled module
+    # compile the kernel code
+    compiled_kernel = compiler.SourceModule(kernel_code)
 
-    if flag_tilled:
-        binary_gpu = mod.get_function("MatrixMulKernelTilled")
-        print
-        "tilled kernel"
+    binary_gpu = None
+    if kernel_type == USE_TILED_KERNEL:
+        binary_gpu = compiled_kernel.get_function("MatrixMulKernelTiled")
 
+    if kernel_type == USE_SIMPLE_KERNEL:
+        binary_gpu = compiled_kernel.get_function("MatrixMulKernel")
+
+    return binary_gpu, grid, blocks
+
+
+def compare_results(time_cpu, time_gpu, c_cpu, c_gpu, blocks, grid):
+    print('## Results: **************************************')
+    print('Time CPU %10.8f' % time_cpu)
+    print('Time GPU %10.8f' % time_gpu)
+    print("Speedup: %5.4f" % (time_cpu / time_gpu))
+
+    # check errors
+    error = np.amax(c_cpu - c_gpu.get())
+    if error < ERROR_THRESHOLD:
+        print('SIZE:', matrix_size, 'SUCCESS - max difference: ', error)
     else:
-        binary_gpu = mod.get_function("MatrixMulKernel")
+        print('SIZE:', matrix_size, '* ERROR above threshold * - max difference: ', error)
 
-    binary_gpu(
-        # inputs
-        matrix_a, matrix_b,
-        # output
-        results_gpu,
-        block=bdim,
-        grid=gdim
-    )
-
-    return results_gpu, bdim, gdim
+    print("Blocks: ", blocks)
+    print("Grid: ", grid)
 
 
-def input_matrix_size():
-    print
-    "Enter the length of matrix N*N"
-
-    length = input()
-
-    return length
-
-
-def compare_cpu_vs_gpu_operations(matrix_size, flag_tilled):
-    # define the (square) matrix size
-    #  note that we'll only use *one* block of threads here
-    #  as a consequence this number (squared) can't exceed max_threads,
-    #  see http://documen.tician.de/pycuda/util.html#pycuda.tools.DeviceData
-    #  for more information on how to get this number for your device
-
+def compare_matrix_operations(matrix_size):
     # create two random square matrices
     a_cpu = np.random.randn(matrix_size, matrix_size).astype(np.float32)
     b_cpu = np.random.randn(matrix_size, matrix_size).astype(np.float32)
     c_cpu = np.empty((matrix_size, matrix_size), np.float32)
 
-    # compute reference on the CPU to verify GPU computation
+    # operation using the CPU
+    tic = time.time()
+    c_cpu = cpu_operation(a_cpu, b_cpu)
+    time_cpu = time.time() - tic
 
     # transfer host (CPU) memory to device (GPU) memory
     a_gpu = gpuarray.to_gpu(a_cpu)
@@ -214,34 +231,40 @@ def compare_cpu_vs_gpu_operations(matrix_size, flag_tilled):
     # create empty gpu array for the result (C = A * B)
     c_gpu = gpuarray.empty((matrix_size, matrix_size), np.float32)
 
+    # compile kernel
+    print("## Simple kernel GPU operation ########################################")
+    kernel_binary, grid, blocks = gpu_compile_kernel(USE_SIMPLE_KERNEL, matrix_size)
+
     # operation using the GPU
     tic = time.time()
     # call the kernel on the card
-    c_gpu, bdim, gdim = gpu_operation(a_gpu, b_gpu, c_gpu, flag_tilled, matrix_size)
-
+    c_gpu = gpu_operation(a_gpu, b_gpu, c_gpu, kernel_binary, blocks, grid)
     time_gpu = time.time() - tic  # time measure
 
-    # operation using the CPU
+    compare_results(time_cpu, time_gpu, c_cpu, c_gpu, blocks, grid)
+
+    # create empty gpu array for the result (C = A * B)
+    c_gpu = gpuarray.empty((matrix_size, matrix_size), np.float32)
+
+    # compile kernel
+    print("## Tiled kernel GPU operation ########################################")
+    kernel_binary, grid, blocks = gpu_compile_kernel(USE_TILED_KERNEL, matrix_size)
+
+    # operation using the GPU
     tic = time.time()
+    # call the kernel on the card
+    c_gpu = gpu_operation(a_gpu, b_gpu, c_gpu, kernel_binary, blocks, grid)
+    time_gpu = time.time() - tic  # time measure
 
-    c_cpu = cpu_operation(a_cpu, b_cpu)
-
-    time_cpu = time.time() - tic
-
-    error_threshold = 1e-4
-    error = np.amax(c_cpu - c_gpu.get())
-
-    if error < error_threshold:
-        print('SIZE:', matrix_size, 'SUCCESS - max difference: ', error, bdim, gdim)
-    else:
-        print('SIZE:', matrix_size, '* ERROR above threshold * - max difference: ', error)
-
-    return error
+    compare_results(time_cpu, time_gpu, c_cpu, c_gpu, blocks, grid)
 
 
 if __name__ == "__main__":
+    ERROR_THRESHOLD = 0.001
+    MAX_MATRIX_SIZE = 3000
 
-    flag_tilled = 0
+    matrix_size = 4
 
-    for matrix_size in range(4, 129):
-        compare_cpu_vs_gpu_operations(matrix_size, flag_tilled)
+    while matrix_size <= MAX_MATRIX_SIZE:
+        compare_matrix_operations(matrix_size)
+        matrix_size = matrix_size * 2
