@@ -15,6 +15,7 @@ Here is a list of examples:
 11. [Sort a vector](11-vector_sort)
 12. [Grids and blocks](12-grids-and-blocks)
 13. [Device attibutes](13-device-attributes)
+14. [Grid and block identification](14-grids-and-blocks-irregular)
 
 
 
