@@ -23,15 +23,15 @@ Open a terminal and type:
 A typical output should look like this one:
 
 ```
-Thread 0 of 4 calculates section 2
-Thread 2 of 4 calculates section 1
-Thread 1 of 4 calculates section 4
-Thread 3 of 4 calculates section 3
+Thread 2 of 16 calculates section 1
+Thread 9 of 16 calculates section 2
+Thread 15 of 16 calculates section 3
+Thread 6 of 16 calculates section 4
 ```
 
 ## Exra Resources
 
 * http://openmp.org/wp/resources/
-* https://msdn.microsoft.com/en-us//library/8k4b1177.aspx
+
 
 

@@ -3,6 +3,8 @@
 
 int main () {
     int numberOfThreads, threadID;
+    
+    omp_set_num_threads(16);
 
     #pragma omp parallel private(threadID)
     {

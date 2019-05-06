@@ -15,6 +15,8 @@ int main ()
         vectorA[i] = i * 1.5;
         vectorB[i] = i + 22.35;
     }
+    
+    omp_set_num_threads(16);
 
     #pragma omp parallel shared(vectorA,vectorB,vectorC,vectorD)\
     private(i, threadID, totalNumberThreads)

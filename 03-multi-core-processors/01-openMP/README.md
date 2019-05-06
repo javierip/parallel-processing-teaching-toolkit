@@ -9,6 +9,7 @@
 5. [Sections](./05-sections)
 6. [Sections II](./06-sections-II)
 7. [Critical](./07-critical)
+8. [Reduction](./08-reduction)
 
 
 ## Extra Resources

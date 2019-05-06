@@ -4,7 +4,7 @@
 int main() {
     int addition, threadID;
     addition = 0;
-
+    
     printf("Using critical\n");
     #pragma omp parallel shared(addition) private(threadID)
     {
