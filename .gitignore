@@ -7,4 +7,9 @@ build*
 # Popular IDEs generated files
 .idea*
 *.user
+*.config
+*.creator
+*.creator.user
+*.files
+*.includes
 
