@@ -4,8 +4,8 @@
 
 Given an objective function, two equations determine the algorithms
 
- 1. ** V(t+1) = w * V(t) + r1 * c1* (P - X) + r2* c2 * (G - X) **
- 2. ** X(t+1) = X(t) + V(t) ***
+ 1. V(t+1) = w * V(t) + r1 * c1* (P - X) + r2* c2 * (G - X)
+ 2. X(t+1) = X(t) + V(t)
  
  Where:
   * V contains velocity of particles
