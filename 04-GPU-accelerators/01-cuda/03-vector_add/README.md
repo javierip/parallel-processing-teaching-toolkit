@@ -1,6 +1,6 @@
 ## About this example
 
-This example shows an addition program of two vectors.
+This example shows an addition of two vectors.
 
 ## Requirements
 

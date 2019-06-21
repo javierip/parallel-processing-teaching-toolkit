@@ -1,5 +1,5 @@
 ## About this example
-This example shows the optimal selection of block size. Base on [CUDA Pro Tip: Occupancy API Simplifies Launch Configuration](https://devblogs.nvidia.com/parallelforall/cuda-pro-tip-occupancy-api-simplifies-launch-configuration).
+This example shows the optimal selection of block size. Based on [CUDA Pro Tip: Occupancy API Simplifies Launch Configuration](https://devblogs.nvidia.com/parallelforall/cuda-pro-tip-occupancy-api-simplifies-launch-configuration).
 
 ## Requirements
 
@@ -29,6 +29,5 @@ Data is correct
 
 ## Extra Resources
  * [NVIDIA toolkit documentation](https://developer.nvidia.com/cuda-toolkit).
-
 
 

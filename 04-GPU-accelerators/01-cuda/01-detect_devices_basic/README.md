@@ -24,10 +24,10 @@ CUDA Device Query...
 There are 1 CUDA devices.
 
 CUDA Device #0
-Major revision number:         5
-Minor revision number:         0
-Name:                          GeForce GTX 750
-Total global memory:           1026031616
+Major revision number:         6
+Minor revision number:         1
+Name:                          GeForce GTX 1060 3GB
+Total global memory:           3164733440
 Total shared memory per block: 49152
 Total registers per block:     65536
 Warp size:                     32
@@ -39,14 +39,12 @@ Maximum dimension 2 of block:  64
 Maximum dimension 0 of grid:   2147483647
 Maximum dimension 1 of grid:   65535
 Maximum dimension 2 of grid:   65535
-Clock rate:                    1137000
+Clock rate:                    1708500
 Total constant memory:         65536
 Texture alignment:             512
 Concurrent copy and execution: Yes
-Number of multiprocessors:     4
+Number of multiprocessors:     9
 Kernel execution timeout:      Yes
-
-Press any key to exit...
 
 ```
 

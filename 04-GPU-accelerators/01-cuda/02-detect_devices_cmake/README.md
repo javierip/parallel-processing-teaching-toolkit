@@ -1,6 +1,6 @@
 ## About this example
 
-This example shows the CUDA platforms and devices in your PC.
+This example shows how to compile a CUDA program using CMake.
 
 ## Requirements
 

@@ -1,6 +1,6 @@
 ## About this example
 
-This example shows the reation of a CUDA project that contains multiple archives.
+This example shows how to build a CUDA project that contains multiple archives.
 
 ## Requirements
 
@@ -45,6 +45,5 @@ Done
 
   * [NVIDIA toolkit documentation](https://developer.nvidia.com/cuda-toolkit).
   * [A blog containing a post](http://bikulov.org/blog/2013/12/24/example-of-cmake-file-for-cuda-plus-cpp-code/)
-
 
 
